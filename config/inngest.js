@@ -1,5 +1,4 @@
 import { Inngest } from "inngest";
-import { connect } from "mongoose";
 import connectDB from "./db";
 import User from "@/models/User";
 
