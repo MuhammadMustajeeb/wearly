@@ -12,6 +12,9 @@ export async function GET(request) {
         await connectDB();
         const user = await User.findById(userId);
 
+        console.log(user);
+        console.log(userId);
+
         if (!user) {
             return NextResponse.json({ success: false, message: "User not found" });
         }
