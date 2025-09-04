@@ -38,7 +38,37 @@ const OrderSummary = () => {
   };
 
   const createOrder = async () => {
+    // get api for place order btn
 
+    try {
+      if (!selectedAddress) {
+        return toast.error("Please select an address")
+      }
+
+      let cartItemsArray = Object.keys(cartItems).map((key) => ({ product:key, quantity: cartItems[key] }))
+
+      // filter out items with 0 quantity
+      cartItemsArray = cartItemsArray.filter((item) => item.quantity > 0);
+
+      if (cartItemsArray.length === 0) {
+        return toast.error("Cart is empty")
+      }
+
+      // if we have order and cartItems then call the api
+      const token = await getToken()
+
+      const { data } = await axios.post('/api/order/create', { address: selectedAddress._id, items: cartItemsArray }, {headers: { Authorization: `Bearer ${token}` }});
+
+      if (data.success) {
+        toast.success(data.message)
+        setCartItems({})
+        router.push('/order-placed')
+      } else { 
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   // call api to get user addresses- when user logged in
