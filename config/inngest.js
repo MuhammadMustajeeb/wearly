@@ -4,7 +4,11 @@ import User from "@/models/User";
 import Order from "@/models/Order";
 
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "wearly-next" });
+export const inngest = new Inngest({
+  id: "wearly-next",
+  eventKey: process.env.INNGEST_EVENT_KEY,
+  signingKey: process.env.INNGEST_SIGNING_KEY,
+});
 
 // will use multiple funtions to manage our clerk webhooks
 // Inngest function to save user data to a database 
