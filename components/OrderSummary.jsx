@@ -9,8 +9,8 @@ const OrderSummary = () => {
   const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [userAddresses, setUserAddresses] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("COD");
 
   const fetchUserAddresses = async () => {
     // call api
@@ -57,7 +57,7 @@ const OrderSummary = () => {
       // if we have order and cartItems then call the api
       const token = await getToken()
 
-      const { data } = await axios.post('/api/order/create', { address: selectedAddress._id, items: cartItemsArray }, {headers: { Authorization: `Bearer ${token}` }});
+      const { data } = await axios.post('/api/order/create', { address: selectedAddress._id, items: cartItemsArray, paymentMethod }, {headers: { Authorization: `Bearer ${token}` }});
 
       if (data.success) {
         toast.success(data.message)
@@ -165,6 +165,45 @@ const OrderSummary = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment method */}
+      <hr className="border-gray-500/30 my-5" />
+
+<div>
+  <label className="text-base font-medium uppercase text-gray-600 block mb-2">
+    Payment Method
+  </label>
+  <div className="flex flex-col gap-2">
+    <label className="flex items-center gap-2">
+      <input 
+        type="radio" 
+        value="COD" 
+        checked={paymentMethod === "COD"} 
+        onChange={(e) => setPaymentMethod(e.target.value)} 
+      />
+      Cash on Delivery
+    </label>
+    <label className="flex items-center gap-2">
+      <input 
+        type="radio" 
+        value="EASYPAISA" 
+        checked={paymentMethod === "EASYPAISA"} 
+        onChange={(e) => setPaymentMethod(e.target.value)} 
+      />
+      Easypaisa (Coming soon)
+    </label>
+    <label className="flex items-center gap-2">
+      <input 
+        type="radio" 
+        value="JAZZCASH" 
+        checked={paymentMethod === "JAZZCASH"} 
+        onChange={(e) => setPaymentMethod(e.target.value)} 
+      />
+      JazzCash (Coming soon)
+    </label>
+  </div>
+</div>
+
 
       <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
         Place Order

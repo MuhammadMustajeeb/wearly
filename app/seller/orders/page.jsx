@@ -72,13 +72,61 @@ const Orders = () => {
                                 </p>
                             </div>
                             <p className="font-medium my-auto">{currency}{order.amount}</p>
-                            <div>
-                                <p className="flex flex-col">
-                                    <span>Method : COD</span>
-                                    <span>Date : {new Date(order.date).toLocaleDateString()}</span>
-                                    <span>Payment : Pending</span>
-                                </p>
-                            </div>
+                            <div className="flex flex-col gap-2">
+  <span>Method : {order.paymentMethod}</span>
+  <span>Date : {new Date(order.date).toLocaleDateString()}</span>
+  <span>Payment : {order.paymentStatus}</span>
+  <span>Status : {order.orderStatus}</span>
+
+  <button
+    onClick={async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.put(
+          "/api/order/update",
+          { orderId: order._id, orderStatus: "shipped" },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (data.success) {
+          toast.success("Order marked as shipped");
+          fetchSellerOrders(); // refresh list
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }}
+    className="bg-blue-600 text-white px-3 py-1 text-xs rounded-md"
+  >
+    Mark Shipped
+  </button>
+
+  <button
+    onClick={async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.put(
+          "/api/order/update",
+          { orderId: order._id, orderStatus: "delivered", paymentStatus: "paid" },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (data.success) {
+          toast.success("Order delivered & paid");
+          fetchSellerOrders();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }}
+    className="bg-green-600 text-white px-3 py-1 text-xs rounded-md"
+  >
+    Mark Delivered
+  </button>
+</div>
+
                         </div>
                     ))}
                 </div>

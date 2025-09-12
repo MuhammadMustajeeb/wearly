@@ -29,6 +29,9 @@ export async function POST(request) {
                 address, 
                 items, 
                 amount: amount + Math.floor(amount * 0.02), // calculate 2% tax
+                paymentMethod: "COD", // ✅ COD by default
+                paymentStatus: "pending",
+                orderStatus: "placed",
                 date: Date.now() 
             }
          });
