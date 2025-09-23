@@ -26,7 +26,7 @@ export const syncUserCreation = inngest.createFunction(
             _id: id,
             email: email_addresses[0].email_address,
             name: first_name + " " + last_name,
-            imageUrl: image_url
+            imageUrl: image_url,
             paymentMethod: event.data.paymentMethod || "COD",   // ✅ fix
         paymentStatus: event.data.paymentStatus || "pending", // ✅ fix
         orderStatus: event.data.orderStatus || "placed",     // ✅ fix
