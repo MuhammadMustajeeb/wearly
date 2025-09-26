@@ -21,6 +21,14 @@ export async function POST(request) {
             return await acc + product.offerPrice * item.quantity;
         }, 0)
 
+        console.log("Sending order to Inngest:", {
+  userId,
+  address,
+  items,
+  amount,
+  paymentMethod: "COD"
+});
+
         // create order
         await inngest.send({
             name: "order/created",

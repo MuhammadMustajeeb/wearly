@@ -26,10 +26,7 @@ export const syncUserCreation = inngest.createFunction(
             _id: id,
             email: email_addresses[0].email_address,
             name: first_name + " " + last_name,
-            imageUrl: image_url,
-            paymentMethod: event.data.paymentMethod || "COD",   // ✅ fix
-        paymentStatus: event.data.paymentStatus || "pending", // ✅ fix
-        orderStatus: event.data.orderStatus || "placed",     // ✅ fix
+            imageUrl: image_url
         }
         await connectDB();
         await User.create(userData);
@@ -76,6 +73,7 @@ export const createUserOrder = inngest.createFunction(
     { event: 'order/created', batchEvents: { maxSize: 5, timeout: "5s" } },// suppose receive more than 25 orders within 5sec, so batching will started and all the 25 orders will be processed in a batch 
 
     async ({ events }) => {
+        console.log("Incoming order events:", JSON.stringify(events, null, 2));
         const orders = events.map((event) => {
             return {
                 userId: event.data.userId,
@@ -83,8 +81,14 @@ export const createUserOrder = inngest.createFunction(
                 amount: event.data.amount,
                 address: event.data.address,
                 date: event.data.date,
+                paymentMethod: event.data.paymentMethod || "COD", // or pass from frontend
+        paymentStatus: event.data.paymentStatus || "pending",
+        orderStatus: event.data.orderStatus || "placed",
             }
         })
+
+        console.log("🛠️ Order schema paths:", Object.keys(Order.schema.paths));
+
 
         // connect to db
         await connectDB();
