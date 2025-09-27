@@ -17,8 +17,7 @@ const nextConfig = {
     ],
   },
   webpack: (config) => {
-    // Force alias resolution for @
-    config.resolve.alias["@"] = path.resolve(__dirname);
+    config.resolve.alias["@"] = path.resolve(process.cwd());
     return config;
   },
 };
