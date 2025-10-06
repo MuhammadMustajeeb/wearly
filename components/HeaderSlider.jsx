@@ -6,27 +6,27 @@ const HeaderSlider = () => {
   const sliderData = [
     {
       id: 1,
-      title: "Experience Pure Sound - Your Perfect Headphones Awaits!",
-      offer: "Limited Time Offer 30% Off",
-      buttonText1: "Buy now",
-      buttonText2: "Find more",
-      imgSrc: assets.header_image_first,
+      title: "Stay Cool & Stylish with Our Summer T-Shirts",
+      offer: "Flat 30% Off – Limited Time Only",
+      buttonText1: "Shop Now",
+      buttonText2: "View Collection",
+      imgSrc: assets.post_one, // replace with your tshirt image
     },
     {
       id: 2,
-      title: "Next-Level Gaming Starts Here - Discover PlayStation 5 Today!",
-      offer: "Hurry up only few lefts!",
-      buttonText1: "Shop Now",
-      buttonText2: "Explore Deals",
-      imgSrc: assets.header_playstation_image,
+      title: "Express Yourself – Graphic Tees that Speak Louder",
+      offer: "Buy 2 Get 1 Free",
+      buttonText1: "Grab Deal",
+      buttonText2: "Explore More",
+      imgSrc: assets.post_three,
     },
     {
       id: 3,
-      title: "Power Meets Elegance - Apple MacBook Pro is Here for you!",
-      offer: "Exclusive Deal 40% Off",
+      title: "Everyday Comfort, Premium Quality",
+      offer: "Starting at just $9.99",
       buttonText1: "Order Now",
-      buttonText2: "Learn More",
-      imgSrc: assets.header_macbook_image,
+      buttonText2: "Discover Styles",
+      imgSrc: assets.post_two,
     },
   ];
 
