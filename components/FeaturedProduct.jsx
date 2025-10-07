@@ -18,16 +18,22 @@ const FeaturedProduct = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-14 mt-12 md:px-14 px-4">
         {products.map(({ id, image, title, description, slug }) => (
-          <div key={id} className="relative group">
-            <Image
-              src={image}
-              alt={title}
-              className="group-hover:brightness-75 transition duration-300 w-full h-auto object-cover"
-            />
+          <div key={id} className="relative group overflow-hidden rounded-lg">
+            <div className="relative w-full h-80"> {/* fixed uniform height */}
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="object-cover group-hover:brightness-75 transition duration-300"
+              />
+            </div>
             <div className="absolute bottom-8 left-8 text-white space-y-2">
               <p className="font-medium text-xl lg:text-2xl">{title}</p>
               <p className="text-sm lg:text-base leading-5 max-w-60">{description}</p>
-              <Link href={`/category/${slug}`} className="inline-flex items-center gap-1.5 bg-[#d6c4b6] px-4 py-2 rounded mt-2">
+              <Link
+                href={`/category/${slug}`}
+                className="inline-flex items-center gap-1.5 bg-[#d6c4b6] px-4 py-2 rounded mt-2"
+              >
                 Explore
               </Link>
             </div>

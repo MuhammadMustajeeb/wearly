@@ -51,6 +51,7 @@ import post_two from "./post_two.png";
 import post_three from "./post_three.png";
 import post_banner_one from "./post_banner_one.jpeg";
 import post_banner_two from "./post_banner_two.png";
+import post_banner_three from "./post_banner_three.png"
 
 export const assets = {
   logo,
@@ -106,6 +107,7 @@ export const assets = {
   post_three,
   post_banner_one,
   post_banner_two,
+  post_banner_three
 };
 
 export const BagIcon = () => {
