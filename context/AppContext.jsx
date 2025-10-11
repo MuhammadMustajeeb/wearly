@@ -68,75 +68,89 @@ export const AppContextProvider = (props) => {
         }
     }
 
-    const addToCart = async (itemId) => {
+    // AppContext.js — inside your provider
 
-        let cartData = structuredClone(cartItems);
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
-        }
-        else {
-            cartData[itemId] = 1;
-        }
-        setCartItems(cartData);
+// helper to build key
+const makeItemKey = (productId, size) => `${productId}:${size || 'NOSIZE'}`;
 
-        // call API to update cart in database
-        if (user) { 
-            try { 
-                const token = await getToken()
+// addToCart now accepts (productId, size)
+const addToCart = async (productId, size = null) => {
+  // sanity
+  if (!productId) return;
+  if (!size) {
+    toast.error("Please select a size.");
+    return;
+  }
 
-                await axios.post('/api/cart/update', { cartData }, {headers: { Authorization: `Bearer ${token}` }});
-                toast.success('Item added to cart')
-            } catch (error) { 
-                toast.error(error.message)
-            }
-        } 
+  let cartData = structuredClone(cartItems);
 
+  const key = makeItemKey(productId, size);
+
+  if (cartData[key]) {
+    cartData[key] += 1;
+  } else {
+    cartData[key] = 1;
+  }
+
+  setCartItems(cartData);
+
+  // persist to DB if logged in
+  if (user) {
+    try {
+      const token = await getToken();
+      await axios.post("/api/cart/update", { cartData }, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Item added to cart");
+    } catch (error) {
+      toast.error(error.message || "Failed to update cart");
     }
+  }
+};
 
-    const updateCartQuantity = async (itemId, quantity) => {
+// updateCartQuantity(itemKey, quantity) // itemKey = productId:size
+const updateCartQuantity = async (itemKey, quantity) => {
+  let cartData = structuredClone(cartItems);
+  if (quantity === 0) {
+    delete cartData[itemKey];
+  } else {
+    cartData[itemKey] = quantity;
+  }
+  setCartItems(cartData);
 
-        let cartData = structuredClone(cartItems);
-        if (quantity === 0) {
-            delete cartData[itemId];
-        } else {
-            cartData[itemId] = quantity;
-        }
-        setCartItems(cartData)
-
-        // call API to update cart in database
-        if (user) { 
-            try { 
-                const token = await getToken()
-
-                await axios.post('/api/cart/update', { cartData }, {headers: { Authorization: `Bearer ${token}` }});
-                toast.success('Cart updated')
-            } catch (error) { 
-                toast.error(error.message)
-            }
-        } 
-
+  if (user) {
+    try {
+      const token = await getToken();
+      await axios.post("/api/cart/update", { cartData }, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success("Cart updated");
+    } catch (error) {
+      toast.error(error.message || "Failed to update cart");
     }
+  }
+};
 
-    const getCartCount = () => {
-        let totalCount = 0;
-        for (const items in cartItems) {
-            if (cartItems[items] > 0) {
-                totalCount += cartItems[items];
-            }
-        }
-        return totalCount;
-    }
+// getCartCount: sum quantities across item keys
+const getCartCount = () => {
+  let totalCount = 0;
+  for (const itemKey in cartItems) {
+    const qty = cartItems[itemKey];
+    if (qty > 0) totalCount += qty;
+  }
+  return totalCount;
+};
 
-    const getCartAmount = () => {
-        let totalAmount = 0;
-        for (const items in cartItems) {
-            let itemInfo = products.find((product) => product._id === items);
-            if (cartItems[items] > 0) {
-                totalAmount += itemInfo.offerPrice * cartItems[items];
-            }
-        }
-        return Math.floor(totalAmount * 100) / 100;
+// getCartAmount: need to resolve productId from key and sum
+const getCartAmount = () => {
+  let totalAmount = 0;
+  for (const itemKey in cartItems) {
+    const [productId] = itemKey.split(":");
+    const qty = cartItems[itemKey];
+    const itemInfo = products.find((product) => product._id === productId);
+    if (itemInfo && qty > 0) {
+      totalAmount += itemInfo.offerPrice * qty;
     }
+  }
+  return Math.floor(totalAmount * 100) / 100;
+};
+
 
     useEffect(() => {
         fetchProductData()

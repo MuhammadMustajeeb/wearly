@@ -10,7 +10,7 @@ const HeaderSlider = () => {
       offer: "Flat 30% Off – Limited Time Only",
       buttonText1: "Shop Now",
       buttonText2: "View Collection",
-      imgSrc: assets.post_one, // replace with your tshirt image
+      imgSrc: assets.post_three, // replace with your tshirt image
     },
     {
       id: 2,
@@ -18,7 +18,7 @@ const HeaderSlider = () => {
       offer: "Buy 2 Get 1 Free",
       buttonText1: "Grab Deal",
       buttonText2: "Explore More",
-      imgSrc: assets.post_three,
+      imgSrc: assets.post_two,
     },
     {
       id: 3,
@@ -26,7 +26,7 @@ const HeaderSlider = () => {
       offer: "Starting at just $9.99",
       buttonText1: "Order Now",
       buttonText2: "Discover Styles",
-      imgSrc: assets.post_two,
+      imgSrc: assets.post_one,
     },
   ];
 

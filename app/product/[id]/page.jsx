@@ -13,6 +13,7 @@ const Product = () => {
     const { id } = useParams();
 
     const { products, router, addToCart } = useAppContext()
+    const [selectedSize, setSelectedSize] = useState("M");
 
     const [mainImage, setMainImage] = useState(null);
     const [productData, setProductData] = useState(null);
@@ -20,6 +21,7 @@ const Product = () => {
     const fetchProductData = async () => {
         const product = products.find(product => product._id === id);
         setProductData(product);
+        setSelectedSize(product.availableSizes?.[0] || "M");
     }
 
     useEffect(() => {
@@ -109,14 +111,48 @@ const Product = () => {
                         </table>
                     </div>
 
+                    
+<div className="mt-6">
+  <div className="flex items-center justify-between">
+    <p className="text-sm font-medium">Size</p>
+    <button onClick={() => {/* open size guide later */}} className="text-sm text-gray-500">Size Guide</button>
+  </div>
+  <div className="flex gap-3 mt-3">
+    {(productData.availableSizes || ['M','L']).map((size) => (
+      <button
+        key={size}
+        onClick={() => setSelectedSize(size)}
+        className={`px-3 py-1.5 rounded-md border ${selectedSize === size ? 'bg-gray-800 text-white' : 'bg-white text-gray-700'}`}
+      >
+        {size}
+      </button>
+    ))}
+  </div>
+</div>
+
                     <div className="flex items-center mt-10 gap-4">
-                        <button onClick={() => addToCart(productData._id)} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
-                            Add to Cart
-                        </button>
-                        <button onClick={() => { addToCart(productData._id); router.push('/cart') }} className="w-full py-3.5 bg-[#d6c4b6] text-white hover:bg-[#e2d3c7] transition">
-                            Buy now
-                        </button>
-                    </div>
+  <button
+    onClick={() => {
+      if (!selectedSize) return toast.error("Please select a size");
+      addToCart(productData._id, selectedSize);
+    }}
+    className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
+  >
+    Add to Cart
+  </button>
+
+  <button
+    onClick={() => {
+      if (!selectedSize) return toast.error("Please select a size");
+      addToCart(productData._id, selectedSize);
+      router.push("/cart");
+    }}
+    className="w-full py-3.5 bg-[#d6c4b6] text-white hover:bg-[#e2d3c7] transition"
+  >
+    Buy now
+  </button>
+</div>
+
                 </div>
             </div>
             <div className="flex flex-col items-center">
