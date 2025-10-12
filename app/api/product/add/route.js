@@ -5,79 +5,74 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/db";
 import Product from "@/models/Product";
 
-// Configure Cloudinary
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export async function POST(request) {
-    try {
+  try {
+    const { userId } = getAuth(request);
+    if (!userId) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
 
-        const { userId } = getAuth(request);
+    const isSeller = await authSeller(userId);
+    if (!isSeller) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
 
-        // check if user is seller or not
-        const isSeller = await authSeller(userId);
+    const formData = await request.formData();
 
-        if (!isSeller) {
-            return NextResponse.json({ success: false, message: "Unauthorized! Access Denied" });
-        }
+    const name = formData.get("name");
+    const description = formData.get("description");
+    const category = formData.get("category");
+    const price = Number(formData.get("price"));
+    const offerPrice = Number(formData.get("offerPrice"));
 
-        // Make formData to send data
-        const formData = await request.formData();
+    // Colors
+    const colors = formData.getAll("colors[]"); // array
+    const altColors = formData.get("colors");   // CSV fallback
+    const availableColors = colors.length
+      ? colors
+      : altColors
+      ? altColors.split(",").map(c => c.trim())
+      : [];
 
-        const name = formData.get('name');
-        const description = formData.get('description');
-        const category = formData.get('category');
-        const price = formData.get('price');
-        const offerPrice = formData.get('offerPrice');
+    console.log("[PRODUCT ADD] Colors to save:", availableColors);
 
-        // get multiple images
-        const files = formData.getAll('images');
+    // Images
+    const files = formData.getAll("images");
+    if (!files.length) return NextResponse.json({ success: false, message: "Upload product images" }, { status: 400 });
 
-        if(!files || files.length == 0) {
-            return NextResponse.json({ success: false, message: "Please upload product images" });
-        }
+    const image = await Promise.all(
+      files.map(async (file) => {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream({ resource_type: "auto" }, (err, res) =>
+            err ? reject(err) : resolve(res.secure_url)
+          );
+          stream.end(buffer);
+        });
+      })
+    );
 
-        // upload images to cloudinary one by one
-        const result = await Promise.all(
-            files.map(async (file) => {
-                const arrayBuffer = await file.arrayBuffer();
-                const buffer = Buffer.from(arrayBuffer);
+    await connectDB();
 
-                return new Promise((resolve, reject) => {
-                    const stream = cloudinary.uploader.upload_stream(
-                        { resource_type: 'auto' },
-                        (error, result) => {
-                            if (error) reject(error);
-                            else resolve(result);
-                        }
-                    )
-                    stream.end(buffer);
-                })
-            })
-        );
+    const newProduct = await Product.create({
+      userId,
+      name,
+      description,
+      category,
+      price,
+      offerPrice,
+      image,
+      availableColors: availableColors.length ? availableColors : [], // save empty if none selected
+      date: Date.now(),
+    });
 
-        const image = result.map((result) => result.secure_url);
+    console.log("[PRODUCT ADD] Saved Product:", newProduct);
 
-        // connect to db
-        await connectDB();
-        const newProduct = await Product.create({
-            userId,
-            name,
-            description,
-            category,
-            price: Number(price),
-            offerPrice: Number(offerPrice),
-            image,
-            date: Date.now()
-        })
-
-        return NextResponse.json({ success: true, message: "Product added successfully", newProduct });
-
-
-    } catch (error) {
-        NextResponse.json({ success: false, message: error.message });  
-    }
+    return NextResponse.json({ success: true, message: "Product added", newProduct });
+  } catch (error) {
+    console.error("[PRODUCT ADD]", error);
+    return NextResponse.json({ success: false, message: error.message || "Server error" }, { status: 500 });
+  }
 }

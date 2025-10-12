@@ -1,31 +1,31 @@
-import Address from "@/models/Address";
+// app/api/order/seller-orders/route.js
 import { getAuth } from "@clerk/nextjs/server";
 import connectDB from "@/config/db";
 import Order from "@/models/Order";
-import { NextResponse } from "next/server";
 import authSeller from "@/lib/authSeller";
-
+import { NextResponse } from "next/server";
 
 export async function GET(request) {
-    try {
+  try {
+    const { userId } = getAuth(request);
 
+    // check seller
+    const isSeller = await authSeller(userId);
+    if (!isSeller) {
+      return NextResponse.json({ success: false, message: "Unauthorized! Access Denied" }, { status: 401 });
+    }
 
-        const { userId } = getAuth(request);
+    await connectDB();
 
-        const isSeller = authSeller(userId);
+    // fetch orders, populate address and product
+    const orders = await Order.find({})
+      .populate("address")
+      .populate("items.product")
+      .sort({ date: -1 });
 
-        if (!isSeller) {
-            return NextResponse.json({ success: false, message: "Unauthorized! Access Denied" });
-        }
-
-        await connectDB();
-
-        Address.length;
-
-        const orders = await Order.find({}).populate('address items.product');
-
-        return NextResponse.json({ success: true, orders });
-    } catch (error) {
-        return NextResponse.json({ success: false, message: error.message });
-    } 
+    return NextResponse.json({ success: true, orders });
+  } catch (error) {
+    console.error("[SELLER ORDERS] ERROR:", error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
 }

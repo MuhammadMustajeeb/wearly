@@ -9,6 +9,8 @@ const productSchema = new mongoose.Schema({
     offerPrice: {type: Number, required: true},
     image: {type: Array, required: true},
     category: {type: String, required: true},
+    availableSizes: { type: [String], default: ["M", "L"] },
+    availableColors: { type: [String], default: [] },
     date: {type: Number, required: true}
 })
 

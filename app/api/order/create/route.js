@@ -13,43 +13,59 @@ export async function POST(request) {
   try {
     // 1️⃣ Parse body
     const body = await request.json().catch(() => null);
-    if (!body) {
-      return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
-    }
+    if (!body) return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
 
-    // 2️⃣ Normalize cart
-    let cartData = null;
+    console.log("[ORDER CREATE] Request body:", body);
+
+    // 2️⃣ Normalize cart items
+    let cartItems = [];
+
+    // Case A: cartData object { "productId:size:color": qty }
     if (body.cartData && typeof body.cartData === "object" && !Array.isArray(body.cartData)) {
-      cartData = body.cartData;
-    } else if (Array.isArray(body.items)) {
-      cartData = {};
-      for (const it of body.items) {
-        if (!it) continue;
-        let key = null;
-        if (typeof it.product === "string") key = it.product.trim();
-        else if (it.product && it.product.id) {
-          const sizePart = it.product.size ? `:${it.product.size}` : "";
-          key = `${String(it.product.id)}${sizePart}`;
-        }
-        const qty = Number(it.quantity ?? it.qty ?? 0);
-        if (key && qty > 0) cartData[key] = (cartData[key] || 0) + qty;
+      for (const key of Object.keys(body.cartData)) {
+        const qty = Number(body.cartData[key]);
+        if (!qty || qty <= 0) continue;
+
+        const parts = key.split(":").map((p) => p.trim());
+        const productId = parts[0];
+        const size = parts[1] || "M";
+        const color = parts[2] || "Default";
+
+        cartItems.push({ productId, quantity: qty, size, color });
       }
-    } else {
-      return NextResponse.json({
-        success: false,
-        message: "cartData missing. Send cartData object or items array.",
-      }, { status: 400 });
     }
 
-    if (!cartData || Object.keys(cartData).length === 0) {
-      return NextResponse.json({ success: false, message: "Cart is empty" }, { status: 400 });
+    // Case B: items array [{ product, quantity, size, color }]
+    if (Array.isArray(body.items)) {
+      const itemsFromArray = body.items
+        .map((it) => {
+          let productStr = it.product;
+          if (!productStr) return null;
+
+          // Split composite key: productId:size:color
+          const parts = productStr.split(":").map(p => p.trim());
+          const productId = parts[0];
+          const size = it.size || parts[1] || "M";
+          const color = it.color || parts[2] || "Default";
+
+          const quantity = Number(it.quantity ?? it.qty ?? 0);
+          if (!productId || quantity <= 0) return null;
+
+          return { productId, quantity, size, color };
+        })
+        .filter(Boolean);
+
+      cartItems = cartItems.concat(itemsFromArray);
     }
 
-    // 3️⃣ Auth (Clerk)
+    if (!cartItems.length) return NextResponse.json({ success: false, message: "Cart is empty" }, { status: 400 });
+
+    console.log("[ORDER CREATE] Normalized cartItems:", cartItems);
+
+    // 3️⃣ Auth
     const { userId } = getAuth(request);
-    if (!userId) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-    }
+    if (!userId) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    console.log("[ORDER CREATE] userId:", userId);
 
     // 4️⃣ Connect DB
     await connectDB();
@@ -57,10 +73,10 @@ export async function POST(request) {
     // 5️⃣ Validate address
     const rawAddress = body.address;
     if (!rawAddress || typeof rawAddress !== "string" || !mongoose.isValidObjectId(rawAddress)) {
-      return NextResponse.json({ success: false, message: "address must be a valid ObjectId" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Address must be a valid ObjectId" }, { status: 400 });
     }
-
     const addressId = new mongoose.Types.ObjectId(rawAddress);
+    console.log("[ORDER CREATE] rawAddress:", rawAddress);
 
     // 6️⃣ Validate payment method
     const paymentMethod = (body.paymentMethod || "").toUpperCase();
@@ -71,54 +87,47 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // 7️⃣ Prepare and validate product items
-    const parsedKeys = Object.keys(cartData);
-    const productIds = parsedKeys.map((k) => k.split(":")[0]);
-    const uniqueProductIds = [...new Set(productIds)];
+    // 7️⃣ Validate product IDs
+    const productIds = [...new Set(cartItems.map((i) => i.productId))];
+    console.log("[ORDER CREATE] productIds:", productIds);
 
-    for (const pid of uniqueProductIds) {
+    for (const pid of productIds) {
       if (!mongoose.isValidObjectId(pid)) {
-        return NextResponse.json({ success: false, message: `Invalid product id: ${pid}` }, { status: 400 });
+        console.log("[ORDER CREATE] Invalid productId:", pid, "cartItems:", cartItems);
+        return NextResponse.json({ success: false, message: `Invalid productId: ${pid}` }, { status: 400 });
       }
     }
 
-    const products = await Product.find({ _id: { $in: uniqueProductIds } }).lean();
+    const products = await Product.find({ _id: { $in: productIds } }).lean();
     const productMap = new Map(products.map((p) => [String(p._id), p]));
 
-    // 8️⃣ Build items array + calculate total
-    const itemsForOrder = [];
+    // 8️⃣ Build order items + calculate total
+    const orderItems = [];
     let totalAmount = 0;
 
-    for (const key of parsedKeys) {
-      const qty = Number(cartData[key]);
-      if (!qty || qty <= 0) continue;
-
-      const [productId, size] = key.split(":");
-      const product = productMap.get(productId);
-      if (!product) {
-        return NextResponse.json({ success: false, message: `Product not found: ${productId}` }, { status: 400 });
-      }
+    for (const item of cartItems) {
+      const product = productMap.get(item.productId);
+      if (!product) return NextResponse.json({ success: false, message: `Product not found: ${item.productId}` }, { status: 400 });
 
       const unitPrice = Number(product.offerPrice ?? product.price ?? 0);
-      const linePrice = unitPrice * qty;
+      const linePrice = unitPrice * item.quantity;
 
-      itemsForOrder.push({
-        product: new mongoose.Types.ObjectId(productId),
-        quantity: qty,
-        size: size || "M", // default fallback
+      orderItems.push({
+        product: new mongoose.Types.ObjectId(item.productId),
+        quantity: item.quantity,
+        size: item.size || "M",
+        color: item.color || "Default", // ✅ store the color
       });
 
       totalAmount += linePrice;
     }
 
-    if (itemsForOrder.length === 0) {
-      return NextResponse.json({ success: false, message: "No valid items to place order" }, { status: 400 });
-    }
+    console.log("[ORDER CREATE] orderItems:", orderItems, "totalAmount:", totalAmount);
 
-    // 9️⃣ Create Order document
+    // 9️⃣ Create order
     const newOrder = await Order.create({
       userId: String(userId),
-      items: itemsForOrder,
+      items: orderItems,
       amount: Math.round(totalAmount * 100) / 100,
       address: addressId,
       paymentMethod,
@@ -126,7 +135,7 @@ export async function POST(request) {
       date: Date.now(),
     });
 
-    // 🔟 Optional: Clear user cart
+    // 🔟 Clear user cart (non-fatal)
     try {
       const updateByClerk = await User.findOneAndUpdate(
         { clerkId: userId },
@@ -139,16 +148,10 @@ export async function POST(request) {
       console.warn("Failed to clear user cart (non-fatal):", err.message);
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Order created successfully",
-      orderId: newOrder._id,
-    });
+    return NextResponse.json({ success: true, message: "Order created successfully", orderId: newOrder._id });
+
   } catch (err) {
     console.error("[ORDER CREATE] ERROR:", err);
-    return NextResponse.json(
-      { success: false, message: err.message || "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: err.message || "Server error" }, { status: 500 });
   }
 }

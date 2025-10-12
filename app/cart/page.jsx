@@ -5,9 +5,18 @@ import OrderSummary from "@/components/OrderSummary";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 
-const Cart = () => {
+// Optional: map color names to hex codes if needed
+const colorMap = {
+  black: "#000000",
+  white: "#FFFFFF",
+  red: "#FF0000",
+  blue: "#0000FF",
+  green: "#00FF00",
+  // add more mappings as needed
+};
 
-  const { products, router, cartItems, addToCart, updateCartQuantity, getCartCount } = useAppContext();
+const Cart = () => {
+  const { products, router, cartItems, updateCartQuantity, getCartCount } = useAppContext();
 
   return (
     <>
@@ -19,6 +28,7 @@ const Cart = () => {
             </p>
             <p className="text-lg md:text-xl text-gray-500/80">{getCartCount()} Items</p>
           </div>
+
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto">
               <thead className="text-left">
@@ -37,77 +47,96 @@ const Cart = () => {
                   </th>
                 </tr>
               </thead>
+
               <tbody>
                 {Object.keys(cartItems).map((itemKey) => {
-  // itemKey format: productId:size
-  const [productId, size] = itemKey.split(":");
-  const product = products.find((product) => product._id === productId);
-  const qty = cartItems[itemKey];
+                  // itemKey format: productId:size:color
+                  const [productId, size, color] = itemKey.split(":");
+                  const product = products.find((p) => p._id === productId);
+                  const qty = cartItems[itemKey];
 
-  if (!product || qty <= 0) return null;
+                  if (!product || qty <= 0) return null;
 
-  return (
-    <tr key={itemKey}>
-      <td className="flex items-center gap-4 py-4 md:px-4 px-1">
-        <div>
-          <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
-            <Image
-              src={product.image[0]}
-              alt={product.name}
-              className="w-16 h-auto object-cover mix-blend-multiply"
-              width={1280}
-              height={720}
-            />
-          </div>
-          <button
-            className="md:hidden text-xs text-[#d6c4b6] mt-1"
-            onClick={() => updateCartQuantity(itemKey, 0)}
-          >
-            Remove
-          </button>
-        </div>
-        <div className="text-sm hidden md:block">
-          <p className="text-gray-800">{product.name}</p>
-          <p className="text-xs text-gray-500 mt-1">Size: <span className="font-medium">{size}</span></p>
-          <button
-            className="text-xs text-[#d6c4b6] mt-1"
-            onClick={() => updateCartQuantity(itemKey, 0)}
-          >
-            Remove
-          </button>
-        </div>
-      </td>
+                  // resolve color for swatch
+                  const displayColor = color && color !== "NOCOLOR" ? (colorMap[color] || color) : null;
 
-      <td className="py-4 md:px-4 px-1 text-gray-600">Rs.{product.offerPrice}</td>
+                  return (
+                    <tr key={itemKey}>
+                      <td className="flex items-center gap-4 py-4 md:px-4 px-1">
+                        <div>
+                          <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
+                            <Image
+                              src={product.image[0]}
+                              alt={product.name}
+                              className="w-16 h-auto object-cover mix-blend-multiply"
+                              width={1280}
+                              height={720}
+                            />
+                          </div>
+                          <button
+                            className="md:hidden text-xs text-[#d6c4b6] mt-1"
+                            onClick={() => updateCartQuantity(itemKey, 0)}
+                          >
+                            Remove
+                          </button>
+                        </div>
 
-      <td className="py-4 md:px-4 px-1">
-        <div className="flex items-center md:gap-2 gap-1">
-          <button onClick={() => updateCartQuantity(itemKey, cartItems[itemKey] - 1)}>
-            <Image src={assets.decrease_arrow} alt="decrease" className="w-4 h-4" />
-          </button>
-          <input
-            onChange={(e) => updateCartQuantity(itemKey, Number(e.target.value))}
-            type="number"
-            value={cartItems[itemKey]}
-            className="w-8 border text-center appearance-none"
-          />
-          <button onClick={() => updateCartQuantity(itemKey, cartItems[itemKey] + 1)}>
-            <Image src={assets.increase_arrow} alt="increase" className="w-4 h-4" />
-          </button>
-        </div>
-      </td>
+                        <div className="text-sm hidden md:block">
+                          <p className="text-gray-800">{product.name}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Size: <span className="font-medium">{size}</span>
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 flex items-center gap-2">
+                            Color: <span className="font-medium">{color !== "NOCOLOR" ? color : "—"}</span>
+                            {displayColor && (
+                              <span
+                                className="w-5 h-5 rounded-full border"
+                                style={{ backgroundColor: displayColor }}
+                              />
+                            )}
+                          </p>
+                          <button
+                            className="text-xs text-[#d6c4b6] mt-1"
+                            onClick={() => updateCartQuantity(itemKey, 0)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </td>
 
-      <td className="py-4 md:px-4 px-1 text-gray-600">
-        Rs.{(product.offerPrice * cartItems[itemKey]).toFixed(2)}
-      </td>
-    </tr>
-  );
-})}
+                      <td className="py-4 md:px-4 px-1 text-gray-600">Rs.{product.offerPrice}</td>
 
+                      <td className="py-4 md:px-4 px-1">
+                        <div className="flex items-center md:gap-2 gap-1">
+                          <button onClick={() => updateCartQuantity(itemKey, qty - 1)}>
+                            <Image src={assets.decrease_arrow} alt="decrease" className="w-4 h-4" />
+                          </button>
+                          <input
+                            onChange={(e) => updateCartQuantity(itemKey, Number(e.target.value))}
+                            type="number"
+                            value={qty}
+                            className="w-8 border text-center appearance-none"
+                          />
+                          <button onClick={() => updateCartQuantity(itemKey, qty + 1)}>
+                            <Image src={assets.increase_arrow} alt="increase" className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+
+                      <td className="py-4 md:px-4 px-1 text-gray-600">
+                        Rs.{(product.offerPrice * qty).toFixed(2)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          <button onClick={()=> router.push('/all-products')} className="group flex items-center mt-6 gap-2 text-[#d6c4b6]">
+
+          <button
+            onClick={() => router.push('/all-products')}
+            className="group flex items-center mt-6 gap-2 text-[#d6c4b6]"
+          >
             <Image
               className="group-hover:-translate-x-1 transition"
               src={assets.arrow_right_icon_colored}
@@ -116,6 +145,7 @@ const Cart = () => {
             Continue Shopping
           </button>
         </div>
+
         <OrderSummary />
       </div>
     </>

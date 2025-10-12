@@ -6,7 +6,8 @@ const orderSchema = new mongoose.Schema({
     {
       product: { type: mongoose.Schema.Types.ObjectId, ref: "product", required: true },
       quantity: { type: Number, required: true },
-      size: { type: String, enum: ["S", "M", "L", "XL"], required: true }, // ✅ New field
+      size: { type: String, enum: ["S", "M", "L", "XL"], required: true },
+      color: { type: String, required: true }, // ✅ NEW
     },
   ],
   amount: { type: Number, required: true },
@@ -18,5 +19,4 @@ const orderSchema = new mongoose.Schema({
 });
 
 const Order = mongoose.models.order || mongoose.model("order", orderSchema);
-
 export default Order;

@@ -81,13 +81,25 @@ const MyOrders = () => {
                                   {product.name || "Product"}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                  Qty: <span className="font-medium">{item.quantity}</span>
-                                  {" • "}
-                                  Size:{" "}
-                                  <span className="font-medium">
-                                    {item.size || "—"}
-                                  </span>
+                                  Qty: <span className="font-medium">{item.quantity}</span> •
+                                  Size: <span className="font-medium">{item.size || "—"}</span>
                                 </p>
+                                <div className="flex items-center gap-1 mt-1">
+                                  <span
+                                    className="w-4 h-4 rounded-full border"
+                                    style={{
+                                      backgroundColor: item.color || "#fff",
+                                      border:
+                                        item.color === "#fff" ||
+                                        item.color?.toLowerCase() === "white"
+                                          ? "1px solid #ccc"
+                                          : "none",
+                                    }}
+                                  ></span>
+                                  <span className="text-xs text-gray-500">
+                                    {item.color || "—"}
+                                  </span>
+                                </div>
                                 <p className="text-sm text-gray-600 mt-1">
                                   Price: {currency}{item.price}
                                 </p>
