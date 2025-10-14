@@ -9,6 +9,13 @@ import { useAppContext } from "@/context/AppContext";
 import React from "react";
 import toast from "react-hot-toast";
 
+/**
+ * Product page with color -> image switching (hardened).
+ * - Normalizes imagesByColor keys (lowercase, hex without #).
+ * - Picks initialColor from availableColors or imagesByColor keys.
+ * - Deduplicates thumbnail lists.
+ */
+
 const Product = () => {
   const { id } = useParams();
   const { products, router, addToCart } = useAppContext();
@@ -25,27 +32,19 @@ const Product = () => {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [showColorGuide, setShowColorGuide] = useState(false);
 
-  const fetchProductData = async () => {
-    const product = products.find((product) => product._id === id);
-    setProductData(product);
-
-    // initialize selected size & color from product's available arrays (if present)
-    const initialSize = product?.availableSizes?.[0] ?? "M";
-    const initialColor = product?.availableColors?.[0] ?? null;
-    setSelectedSize(initialSize);
-    setSelectedColor(initialColor);
+  // helpers
+  const sanitizeColorForSearch = (c) => {
+    if (!c) return "";
+    return String(c).replace(/^#/, "").trim().toLowerCase();
   };
 
-  useEffect(() => {
-    fetchProductData();
-  }, [id, products.length]);
+  const normalizeColorKey = (c) => {
+    if (!c && c !== "") return "";
+    return String(c).trim().toLowerCase().replace(/^#/, "");
+  };
 
-  if (!productData) return <Loading />;
-
-  // helper to safely render swatch background: check if color looks like a hex or CSS color name
   const isValidCssColor = (c) => {
     if (!c) return false;
-    // quick test using a dummy element (works in browser)
     try {
       const s = new Option().style;
       s.color = "";
@@ -56,6 +55,155 @@ const Product = () => {
     }
   };
 
+  // Convert imagesByColor in product to a normalized map for reliable lookup.
+  // Returns a new object mapping normalized keys -> array of urls.
+  const buildNormalizedImagesByColor = (product) => {
+    if (!product || !product.imagesByColor || typeof product.imagesByColor !== "object") return null;
+    const normalized = {};
+    for (const rawKey of Object.keys(product.imagesByColor)) {
+      const key = normalizeColorKey(rawKey);
+      if (!key) continue;
+      const urls = Array.isArray(product.imagesByColor[rawKey])
+        ? product.imagesByColor[rawKey].slice()
+        : Array.isArray(product.imagesByColor[key])
+        ? product.imagesByColor[key].slice()
+        : [];
+      if (urls.length) normalized[key] = urls;
+    }
+    return Object.keys(normalized).length ? normalized : null;
+  };
+
+  // Try to find images associated with a color. Returns array or null.
+  const findImagesForColor = (product, color) => {
+    if (!product || !color) return null;
+    const normColor = normalizeColorKey(color);
+
+    // 1) explicit mapping (normalized)
+    const normalizedMap = buildNormalizedImagesByColor(product);
+    if (normalizedMap) {
+      if (normalizedMap[normColor]) return normalizedMap[normColor];
+    }
+
+    // 2) heuristic: check product.image URLs for token
+    const urlList = Array.isArray(product.image) ? product.image : [];
+    if (!urlList.length) return null;
+
+    const searchToken = sanitizeColorForSearch(color);
+    if (!searchToken) return null;
+
+    // exact substring match
+    const matches = urlList.filter((u) => {
+      try {
+        return u.toLowerCase().includes(searchToken);
+      } catch {
+        return false;
+      }
+    });
+    if (matches.length) return matches;
+
+    // 3) hex fragment match (if color was provided as hex)
+    const hexCandidate = normalizeColorKey(color);
+    if (hexCandidate && hexCandidate.length >= 3) {
+      const hexMatches = urlList.filter((u) => {
+        try {
+          return u.toLowerCase().includes(hexCandidate);
+        } catch {
+          return false;
+        }
+      });
+      if (hexMatches.length) return hexMatches;
+    }
+
+    return null;
+  };
+
+  // dedupe URL array preserving order
+  const dedupe = (arr = []) => Array.from(new Set(arr.filter(Boolean)));
+
+  // set product data and initial variants
+  const fetchProductData = async () => {
+    const product = products.find((p) => p._id === id);
+    setProductData(product);
+
+    if (!product) {
+      console.warn("Product not found for id:", id);
+      return;
+    }
+
+    // pick initial size
+    const initialSize = product?.availableSizes?.[0] ?? "M";
+    setSelectedSize(initialSize);
+
+    // pick initial color: prefer availableColors[0], else imagesByColor key, else null
+    let initialColor = null;
+    if (Array.isArray(product.availableColors) && product.availableColors.length) {
+      initialColor = product.availableColors[0];
+    } else {
+      const normalizedMap = buildNormalizedImagesByColor(product);
+      if (normalizedMap) {
+        const firstKey = Object.keys(normalizedMap)[0];
+        initialColor = firstKey || null;
+      }
+    }
+
+    setSelectedColor(initialColor);
+
+    // initial main image preference
+    const colorImages = findImagesForColor(product, initialColor);
+    if (colorImages && colorImages.length) {
+      setMainImage(colorImages[0]);
+      return;
+    }
+
+    if (product?.image?.[0]) {
+      setMainImage(product.image[0]);
+      return;
+    }
+
+    setMainImage(assets.box_icon);
+  };
+
+  useEffect(() => {
+    fetchProductData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, products.length]);
+
+  // when selectedColor changes, update main image to color-specific image (if found)
+  useEffect(() => {
+    if (!productData) return;
+
+    const colorImages = findImagesForColor(productData, selectedColor);
+    if (colorImages && colorImages.length) {
+      // avoid unnecessary state update if same URL (compare strings)
+      if (!mainImage || String(mainImage) !== String(colorImages[0])) {
+        setMainImage(colorImages[0]);
+      }
+      return;
+    }
+
+    // fallback: first generic image
+    if (productData?.image?.[0]) {
+      if (!mainImage || String(mainImage) !== String(productData.image[0])) {
+        setMainImage(productData.image[0]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedColor, productData]);
+
+  if (!productData) return <Loading />;
+
+  // thumbnails for current color or fallback, deduped
+  const thumbnailsForCurrentColor = () => {
+    const colorImages = findImagesForColor(productData, selectedColor) || [];
+    const fallback = productData.image || [];
+    return dedupe(colorImages.length ? colorImages : fallback);
+  };
+
+  // debug helpers (remove or toggle if noisy)
+  // console.log("productData:", productData);
+  // console.log("selectedColor:", selectedColor, "mainImage:", mainImage);
+  // console.log("imagesByColor normalized:", buildNormalizedImagesByColor(productData));
+
   return (
     <>
       <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
@@ -63,7 +211,7 @@ const Product = () => {
           <div className="px-5 lg:px-16 xl:px-20">
             <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4">
               <Image
-                src={mainImage || productData.image[0]}
+                src={mainImage || productData.image[0] || assets.box_icon}
                 alt={productData.name || "product image"}
                 className="w-full h-auto object-cover mix-blend-multiply"
                 width={1280}
@@ -72,7 +220,7 @@ const Product = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-4">
-              {productData.image.map((image, index) => (
+              {thumbnailsForCurrentColor().map((image, index) => (
                 <div
                   key={index}
                   onClick={() => setMainImage(image)}
@@ -126,7 +274,11 @@ const Product = () => {
                   </tr>
                   <tr>
                     <td className="text-gray-600 font-medium">Color</td>
-                    <td className="text-gray-800/50 ">Multi</td>
+                    <td className="text-gray-800/50 ">
+                      {productData.availableColors && productData.availableColors.length
+                        ? productData.availableColors.join(", ")
+                        : "Multi"}
+                    </td>
                   </tr>
                   <tr>
                     <td className="text-gray-600 font-medium">Category</td>
@@ -136,7 +288,7 @@ const Product = () => {
               </table>
             </div>
 
-            {/* Size selector (your existing UI) */}
+            {/* Size selector */}
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">Size</p>
@@ -163,7 +315,7 @@ const Product = () => {
               </div>
             </div>
 
-            {/* ====== NEW: Color selector UI ====== */}
+            {/* Color selector */}
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">Color</p>
@@ -189,29 +341,23 @@ const Product = () => {
                       aria-label={`Select color ${color}`}
                       style={valid ? { background: color } : { background: "#ffffff" }}
                     >
-                      {/* if not a valid CSS color, show first letter as label */}
                       {!valid && <span className="text-xs text-gray-700">{String(color).charAt(0).toUpperCase()}</span>}
                     </button>
                   );
                 })}
               </div>
 
-              {/* show selected color name / preview */}
               <div className="mt-2 text-sm text-gray-600">
-                Selected:{" "}
-                <span className="font-medium">
-                  {selectedColor ?? "—"}
-                </span>
+                Selected: <span className="font-medium">{selectedColor ?? "—"}</span>
               </div>
             </div>
 
-            {/* Add to cart / Buy buttons (now pass color) */}
+            {/* Add to cart / Buy buttons */}
             <div className="flex items-center mt-10 gap-4">
               <button
                 onClick={() => {
                   if (!selectedSize) return toast.error("Please select a size");
                   if (!selectedColor) return toast.error("Please select a color");
-                  // Pass (productId, size, color) to addToCart
                   addToCart(productData._id, selectedSize, selectedColor);
                 }}
                 className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
@@ -266,7 +412,6 @@ const Product = () => {
               Close
             </button>
             <div className="pt-6">
-              {/* Replace with your size guide image or content */}
               <Image src={assets.size_guide_image} alt="Size Guide" width={800} height={400} className="w-full h-auto" />
             </div>
           </div>
@@ -284,7 +429,6 @@ const Product = () => {
               Close
             </button>
             <div className="pt-6">
-              {/* Replace with a helpful color guide image or text */}
               <p className="text-lg font-medium">Color Guide</p>
               <p className="text-sm text-gray-600 mt-3">
                 Colors display depending on your screen. If a swatch looks off, check the color name or hex in product settings.
