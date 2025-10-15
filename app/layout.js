@@ -1,32 +1,67 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import { AppContextProvider }  from "../context/AppContext";
+import { AppContextProvider } from "../context/AppContext";
 import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Script from "next/script"; // ✅ ADD THIS
 
-const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500"] })
+const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"] });
 
 export const metadata = {
   title: "Flexters",
-  description: "E-Commerce with Next.js ",
+  description: "E-Commerce with Next.js",
   other: {
     "facebook-domain-verification": "7eayafhpvlaj0qxxbq22b4rmlimyds",
   },
 };
 
 export default function RootLayout({ children }) {
+  const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID; // ✅ GET FROM ENV
+
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${outfit.className} antialiased text-gray-700`} >
+        <head>
+          {/* ✅ Facebook Pixel Script */}
+          {pixelId && (
+            <Script id="fb-pixel" strategy="afterInteractive">
+              {`
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${pixelId}');
+                fbq('track', 'PageView');
+              `}
+            </Script>
+          )}
+        </head>
+
+        <body className={`${outfit.className} antialiased text-gray-700`}>
           <Toaster />
           <AppContextProvider>
             <Header />
             <main className="min-h-screen">{children}</main>
             <Footer />
           </AppContextProvider>
+
+          {/* ✅ noscript fallback */}
+          {pixelId && (
+            <noscript>
+              <iframe
+                src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+                height="1"
+                width="1"
+                style={{ display: "none" }}
+              />
+            </noscript>
+          )}
         </body>
       </html>
     </ClerkProvider>
