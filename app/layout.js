@@ -13,9 +13,13 @@ export const metadata = {
   title: "Flexters",
   description: "E-Commerce with Next.js",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
+  icon: [
+    { url: "/favicon.ico" },
+  ],
+  apple: [
+    { url: "/apple-touch-icon.png", sizes: "180x180" },
+  ],
+},
   other: {
     "facebook-domain-verification": "7eayafhpvlaj0qxxbq22b4rmlimyds",
   },
