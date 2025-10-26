@@ -49,6 +49,10 @@ export default function RootLayout({ children }) {
               `}
             </Script>
           )}
+          {/* ✅ Add favicon links manually */}
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" />
         </head>
 
         <body className={`${outfit.className} antialiased text-gray-700`}>
