@@ -49,7 +49,7 @@ import product_details_page_apple_earphone_image5 from "./product_details_page_a
 import post_one from "./post_one.png";
 import post_two from "./post_two.png";
 import post_three from "./post_three.png";
-import post_banner_one from "./post_banner_one.jpeg";
+import post_banner_one from "./post_banner_one.png";
 import post_banner_two from "./post_banner_two.png";
 import post_banner_three from "./post_banner_three.png"
 import basic_shirts from "./basic_shirts.png"
