@@ -100,9 +100,9 @@ const MyOrders = () => {
                                     {item.color || "—"}
                                   </span>
                                 </div>
-                                <p className="text-sm text-gray-600 mt-1">
+                                {/* <p className="text-sm text-gray-600 mt-1">
                                   Price: {currency}{item.price}
-                                </p>
+                                </p> */}
                               </div>
                             </div>
                           );
@@ -124,17 +124,28 @@ const MyOrders = () => {
                   </div>
 
                   {/* Right: Summary */}
-                  <div className="flex flex-col items-end justify-between">
-                    <p className="font-medium my-auto text-lg">
-                      {currency}{order.amount}
-                    </p>
-                    <div className="text-right text-sm">
-                      <p>Method: {order.paymentMethod || "—"}</p>
-                      <p>Date: {order.date ? new Date(order.date).toLocaleDateString() : "—"}</p>
-                      <p>Payment: {order.paymentStatus || "—"}</p>
-                      <p>Status: {order.orderStatus || "—"}</p>
-                    </div>
-                  </div>
+<div className="flex flex-col items-end justify-between">
+  <p className="text-sm text-gray-600">
+    Shipping Fee: {currency}{order.shippingFee ?? 0}
+  </p>
+
+  <p className="text-sm text-gray-600">
+    Subtotal: {currency}{(order.amount ?? 0) - (order.shippingFee ?? 0)}
+  </p>
+
+  <p className="font-semibold text-lg mt-1">
+    Total: {currency}{order.amount ?? 0}
+  </p>
+
+  <div className="text-right text-sm mt-2">
+    <p>Method: {order.paymentMethod || "—"}</p>
+    <p>Date: {order.date ? new Date(order.date).toLocaleDateString() : "—"}</p>
+    <p>Payment: {order.paymentStatus || "—"}</p>
+    <p>Status: {order.orderStatus || "—"}</p>
+  </div>
+</div>
+
+                  
                 </div>
               ))
             )}

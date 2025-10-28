@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 
 const Product = () => {
   const { id } = useParams();
-  const { products, router, addToCart } = useAppContext();
+  const { products, router, addToCart, getAdjustedPrice } = useAppContext();
 
   // image + product data
   const [mainImage, setMainImage] = useState(null);
@@ -199,10 +199,13 @@ const Product = () => {
     return dedupe(colorImages.length ? colorImages : fallback);
   };
 
-  // debug helpers (remove or toggle if noisy)
-  // console.log("productData:", productData);
-  // console.log("selectedColor:", selectedColor, "mainImage:", mainImage);
-  // console.log("imagesByColor normalized:", buildNormalizedImagesByColor(productData));
+  // compute display prices (changes if category === 'graphic' and size is large)
+const adjustedPrice = getAdjustedPrice(productData, selectedSize);
+const adjustedBasePrice = getAdjustedPrice(
+  { ...productData, offerPrice: productData.price }, // base price variant
+  selectedSize
+);
+
 
   return (
     <>
@@ -257,11 +260,12 @@ const Product = () => {
             <p className="text-gray-600 mt-3">{productData.description}</p>
 
             <p className="text-3xl font-medium mt-6">
-              Rs.{productData.offerPrice}
-              <span className="text-base font-normal text-gray-800/60 line-through ml-2">
-                Rs.{productData.price}
-              </span>
-            </p>
+  Rs.{adjustedPrice}
+  <span className="text-base font-normal text-gray-800/60 line-through ml-2">
+    Rs.{adjustedBasePrice}
+  </span>
+</p>
+
 
             <hr className="bg-gray-600 my-6" />
 
@@ -355,7 +359,7 @@ const Product = () => {
                   if (!selectedColor) return toast.error("Please select a color");
                   addToCart(productData._id, selectedSize, selectedColor);
                 }}
-                className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
+                className="w-full py-3.5 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
               >
                 Add to Cart
               </button>
@@ -367,7 +371,7 @@ const Product = () => {
                   addToCart(productData._id, selectedSize, selectedColor);
                   router.push("/cart");
                 }}
-                className="w-full py-3.5 bg-[#d6c4b6] text-white hover:bg-[#e2d3c7] transition"
+                className="w-full py-3.5 bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7] transition"
               >
                 Buy now
               </button>

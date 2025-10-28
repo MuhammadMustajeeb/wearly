@@ -101,34 +101,52 @@ export async function POST(request) {
     const products = await Product.find({ _id: { $in: productIds } }).lean();
     const productMap = new Map(products.map((p) => [String(p._id), p]));
 
-    // 8️⃣ Build order items + calculate total
-    const orderItems = [];
-    let totalAmount = 0;
+    // 8️⃣ Build order items + calculate total (respects frontend price + shipping)
+const orderItems = [];
+let totalAmount = 0;
 
-    for (const item of cartItems) {
-      const product = productMap.get(item.productId);
-      if (!product) return NextResponse.json({ success: false, message: `Product not found: ${item.productId}` }, { status: 400 });
+for (const item of cartItems) {
+  const product = productMap.get(item.productId);
+  if (!product)
+    return NextResponse.json(
+      { success: false, message: `Product not found: ${item.productId}` },
+      { status: 400 }
+    );
 
-      const unitPrice = Number(product.offerPrice ?? product.price ?? 0);
-      const linePrice = unitPrice * item.quantity;
+  // Use frontend price if provided, otherwise fallback to DB price
+  let unitPrice = Number(item.price ?? product.offerPrice ?? product.price ?? 0);
 
-      orderItems.push({
-        product: new mongoose.Types.ObjectId(item.productId),
-        quantity: item.quantity,
-        size: item.size || "M",
-        color: item.color || "Default", // ✅ store the color
-      });
+  // Apply size adjustment for graphic products
+  if (product?.category?.toLowerCase() === "graphic" && item.size === "L") {
+    unitPrice = Math.round(unitPrice * 1.2105); // +21% for L
+  }
 
-      totalAmount += linePrice;
-    }
+  const linePrice = unitPrice * item.quantity;
 
-    console.log("[ORDER CREATE] orderItems:", orderItems, "totalAmount:", totalAmount);
+  orderItems.push({
+    product: new mongoose.Types.ObjectId(item.productId),
+    quantity: item.quantity,
+    size: item.size || "M",
+    color: item.color || "Default",
+    price: unitPrice, // store adjusted price for order display
+  });
+
+  totalAmount += linePrice;
+}
+
+// ✅ Add fixed shipping fee
+const shippingFee = Number(body.shippingFee ?? 100);
+totalAmount += shippingFee;
+
+
+console.log("[ORDER CREATE] orderItems:", orderItems, "totalAmount:", totalAmount);
 
     // 9️⃣ Create order
     const newOrder = await Order.create({
       userId: String(userId),
       items: orderItems,
       amount: Math.round(totalAmount * 100) / 100,
+      shippingFee,
       address: addressId,
       paymentMethod,
       paymentStatus: "pending",

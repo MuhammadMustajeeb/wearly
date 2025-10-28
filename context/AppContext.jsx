@@ -128,6 +128,19 @@ export const AppContextProvider = ({ children }) => {
         return Math.floor(totalAmount * 100) / 100;
     };
 
+    const getAdjustedPrice = (product, size) => {
+  if (!product) return 0;
+  let price = product.offerPrice || 0;
+
+  if (product.category?.toLowerCase() === "graphic") {
+    if (size === "L") price = Math.round(price * 1.2105);
+    else if (size === "XL") price = Math.round(price * 1.2);
+  }
+
+  return price;
+};
+
+
     // Effects
     useEffect(() => { fetchProductData(); }, []);
     useEffect(() => { if (user) fetchUserData(); }, [user]);
@@ -141,7 +154,7 @@ export const AppContextProvider = ({ children }) => {
         products, fetchProductData,
         cartItems, setCartItems,
         addToCart, updateCartQuantity,
-        getCartCount, getCartAmount
+        getCartCount, getCartAmount, getAdjustedPrice
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

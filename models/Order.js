@@ -8,8 +8,10 @@ const orderSchema = new mongoose.Schema({
       quantity: { type: Number, required: true },
       size: { type: String, enum: ["S", "M", "L", "XL"], required: true },
       color: { type: String, required: true }, // ✅ NEW
+      price: Number,
     },
   ],
+  shippingFee: { type: Number, default: 0 },
   amount: { type: Number, required: true },
   address: { type: mongoose.Schema.Types.ObjectId, ref: "address", required: true },
   paymentMethod: { type: String, enum: ["COD", "EASYPAISA", "JAZZCASH"], required: true },

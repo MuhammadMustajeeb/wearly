@@ -16,7 +16,7 @@ const colorMap = {
 };
 
 const Cart = () => {
-  const { products, router, cartItems, updateCartQuantity, getCartCount } = useAppContext();
+  const { products, router, cartItems, updateCartQuantity, getCartCount, getAdjustedPrice } = useAppContext();
 
   return (
     <>
@@ -54,6 +54,10 @@ const Cart = () => {
                   const [productId, size, color] = itemKey.split(":");
                   const product = products.find((p) => p._id === productId);
                   const qty = cartItems[itemKey];
+
+                  const displayPrice = getAdjustedPrice(product, size);
+
+
 
                   if (!product || qty <= 0) return null;
 
@@ -104,7 +108,7 @@ const Cart = () => {
                         </div>
                       </td>
 
-                      <td className="py-4 md:px-4 px-1 text-gray-600">Rs.{product.offerPrice}</td>
+                      <td className="py-4 md:px-4 px-1 text-gray-600">Rs.{displayPrice}</td>
 
                       <td className="py-4 md:px-4 px-1">
                         <div className="flex items-center md:gap-2 gap-1">
@@ -124,8 +128,9 @@ const Cart = () => {
                       </td>
 
                       <td className="py-4 md:px-4 px-1 text-gray-600">
-                        Rs.{(product.offerPrice * qty).toFixed(2)}
-                      </td>
+  Rs.{(getAdjustedPrice(product, size) * qty).toFixed(2)}
+</td>
+
                     </tr>
                   );
                 })}
