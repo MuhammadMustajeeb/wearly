@@ -268,7 +268,7 @@ const Product = () => {
             <div className="overflow-x-auto">
               <table className="table-auto border-collapse w-full max-w-72">
                 <tbody>
-                  <tr>
+                  {/* <tr>
                     <td className="text-gray-600 font-medium">Brand</td>
                     <td className="text-gray-800/50 ">Generic</td>
                   </tr>
@@ -279,7 +279,7 @@ const Product = () => {
                         ? productData.availableColors.join(", ")
                         : "Multi"}
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className="text-gray-600 font-medium">Category</td>
                     <td className="text-gray-800/50">{productData.category}</td>
@@ -319,12 +319,7 @@ const Product = () => {
             <div className="mt-6">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">Color</p>
-                <button
-                  onClick={() => setShowColorGuide(true)}
-                  className="text-sm text-gray-500 underline"
-                >
-                  Color Guide
-                </button>
+                
               </div>
 
               <div className="flex gap-3 mt-3 items-center">
