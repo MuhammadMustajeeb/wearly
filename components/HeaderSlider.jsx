@@ -14,7 +14,7 @@ const HeaderSlider = () => {
       buttonText1: "Shop Winter Collection",
       buttonText2: "View All Products",
       buttonLink1: "/category/plain",
-      buttonLink2: "/shop",
+      buttonLink2: "/all-products",
       imgSrc: assets.post_three,
     },
     {
@@ -33,8 +33,8 @@ const HeaderSlider = () => {
       offer: "Starting at just $9.99",
       buttonText1: "Shop All Tees",
       buttonText2: "Discover All Styles",
-      buttonLink1: "/shop",
-      buttonLink2: "/shop",
+      buttonLink1: "/all-products",
+      buttonLink2: "/all-products",
       imgSrc: assets.post_one,
     },
   ];
