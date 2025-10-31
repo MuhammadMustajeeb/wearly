@@ -18,12 +18,12 @@ import toast from "react-hot-toast";
 const colorMap = {
   black: "Black",
   white: "White",
-  "#FF8559": "Pink",
-  "#be000a": "Brown",
-  "#ff0000": "Red",
-  "#ffe497": "Beige",
+  "#bd6a7c ": "Pink",
+  "#59251c ": "Brown",
+  "#a6072e ": "Red",
+  "#ebd3b2": "Beige",
   "#BEBEBE": "Gray",
-  blue: "Blue",
+  "#0e43ad": "Blue",
 };
 
 
