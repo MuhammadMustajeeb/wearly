@@ -428,7 +428,7 @@ const adjustedBasePrice = getAdjustedPrice(
               Close
             </button>
             <div className="pt-6">
-              <Image src={assets.size_guide_image} alt="Size Guide" width={800} height={400} className="w-full h-auto" />
+              <Image src={assets.size_guie_image} alt="Size Guide" width={800} height={400} className="w-full h-auto" />
             </div>
           </div>
         </div>
