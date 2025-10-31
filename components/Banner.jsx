@@ -1,6 +1,7 @@
 import React from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -17,10 +18,19 @@ const Banner = () => {
         <p className="max-w-[343px] font-medium text-gray-800/60">
           Soft fabrics, modern fits, and timeless designs — your perfect tee awaits.
         </p>
-        <button className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-[#d6c4b6] rounded text-white">
-          Grab the Offer
-          <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon_white} alt="arrow_icon_white" />
-        </button>
+        <Link
+  href="/all-products"
+  className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-[#d6c4b6] rounded text-white transition hover:opacity-90"
+  aria-label="Grab the offer and explore our latest t-shirts"
+>
+  Grab the Offer
+  <Image
+    className="group-hover:translate-x-1 transition"
+    src={assets.arrow_icon_white}
+    alt="arrow_icon_white"
+  />
+</Link>
+
       </div>
       <Image
         className="hidden md:block max-w-80"
