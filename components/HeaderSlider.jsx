@@ -15,7 +15,7 @@ const HeaderSlider = () => {
       buttonText2: "View All Products",
       buttonLink1: "/category/plain",
       buttonLink2: "/all-products",
-      imgSrc: assets.post_three,
+      imgSrc: assets.post_one,
     },
     {
       id: 2,
@@ -35,7 +35,7 @@ const HeaderSlider = () => {
       buttonText2: "Discover All Styles",
       buttonLink1: "/all-products",
       buttonLink2: "/all-products",
-      imgSrc: assets.post_one,
+      imgSrc: assets.post_three,
     },
   ];
 

@@ -15,6 +15,17 @@ import toast from "react-hot-toast";
  * - Picks initialColor from availableColors or imagesByColor keys.
  * - Deduplicates thumbnail lists.
  */
+const colorMap = {
+  black: "Black",
+  white: "White",
+  "#FF8559": "Pink",
+  "#be000a": "Brown",
+  "#ff0000": "Red",
+  "#ffe497": "Beige",
+  "#BEBEBE": "Gray",
+  blue: "Blue",
+};
+
 
 const Product = () => {
   const { id } = useParams();
@@ -347,8 +358,14 @@ const adjustedBasePrice = getAdjustedPrice(
               </div>
 
               <div className="mt-2 text-sm text-gray-600">
-                Selected: <span className="font-medium">{selectedColor ?? "—"}</span>
-              </div>
+  Selected:{" "}
+  <span className="font-medium">
+    {selectedColor
+      ? colorMap[selectedColor] || selectedColor
+      : "—"}
+  </span>
+</div>
+
             </div>
 
             {/* Add to cart / Buy buttons */}
