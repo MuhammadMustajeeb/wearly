@@ -46,14 +46,14 @@ import product_details_page_apple_earphone_image2 from "./product_details_page_a
 import product_details_page_apple_earphone_image3 from "./product_details_page_apple_earphone_image3.png";
 import product_details_page_apple_earphone_image4 from "./product_details_page_apple_earphone_image4.png";
 import product_details_page_apple_earphone_image5 from "./product_details_page_apple_earphone_image5.png";
-import post_one from "./post_one.png";
-import post_two from "./post_two.png";
-import post_three from "./post_three.png";
-import post_banner_one from "./post_banner_one.png";
-import post_banner_two from "./post_banner_two.png";
-import post_banner_three from "./post_banner_three.png"
-import basic_shirts from "./basic_shirts.png"
-import basic_shirts_one from "./basic_shirts_one.png"
+import post_one from "./post_one.webp";
+import post_two from "./post_two.webp";
+import post_three from "./post_three.webp";
+import post_banner_one from "./post_banner_one.webp";
+import post_banner_two from "./post_banner_two.webp";
+import post_banner_three from "./post_banner_three.webp"
+import basic_shirts from "./basic_shirts.webp"
+import basic_shirts_one from "./basic_shirts_one.webp"
 import size_guie_image from "./size_guide_image.webp"
 
 export const assets = {
