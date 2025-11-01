@@ -39,7 +39,7 @@ const Banner = () => {
       />
       <Image
         className="md:hidden"
-        src={assets.sm_controller_image}
+        src={assets.basic_shirts_one}
         alt="sm_controller_image"
       />
     </div>
