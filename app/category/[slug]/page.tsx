@@ -1,24 +1,24 @@
-// app/category/[slug]/page.jsx
 import connectDB from "@/config/db";
 import Product from "@/models/Product";
 import ProductCard from "@/components/ProductCard";
 import React from "react";
 
 export async function generateMetadata({ params }) {
-  const { slug } = await params; // ✅ await added
-  return { title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} T-Shirts - Flexters` };
+  const { slug } = params;
+  return {
+    title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} T-Shirts - Flexters`,
+  };
 }
 
 export default async function CategoryPage({ params }) {
-  const { slug } = await params; // ✅ await added
+  const { slug } = params;
   await connectDB();
 
-  const products = await Product.find({ category: slug }).sort({ date: -1 }).lean();
+const products = await (Product as any).find({ category: slug }).sort({ date: -1 }).exec();
 
-  // Convert Mongoose documents (with ObjectId) into plain JS objects
   const plainProducts = products.map((p) => ({
     ...p,
-    _id: p._id.toString(), // ✅ ensures it's serializable
+    _id: p._id.toString(),
   }));
 
   const titleMap = { plain: "Plain T-Shirts", bold: "Bold Tees", graphic: "Graphic Tees" };
