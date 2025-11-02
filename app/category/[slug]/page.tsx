@@ -3,28 +3,28 @@ import Product from "@/models/Product";
 import ProductCard from "@/components/ProductCard";
 import React from "react";
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params; // ✅ fix
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   return {
     title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} T-Shirts - Flexters`,
   };
 }
 
-export default async function CategoryPage({ params }) {
-  const { slug } = await params; // ✅ sometimes helps for async props
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   await connectDB();
 
-  // ✅ Use lean() to avoid Mongoose Document issues
-  const products = await Product.find({ category: slug })
+  const products = await (Product as any)
+    .find({ category: slug })
     .sort({ date: -1 })
     .lean();
 
-  const plainProducts = products.map((p) => ({
+  const plainProducts = products.map((p: any) => ({
     ...p,
     _id: p._id.toString(),
   }));
 
-  const titleMap = {
+  const titleMap: Record<string, string> = {
     plain: "Plain T-Shirts",
     bold: "Bold Tees",
     graphic: "Graphic Tees",
@@ -35,9 +35,7 @@ export default async function CategoryPage({ params }) {
     <div className="container mx-auto py-12 px-6">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-gray-900">{title}</h1>
-        <p className="text-gray-600 mt-2">
-          Browse {plainProducts.length} items
-        </p>
+        <p className="text-gray-600 mt-2">Browse {plainProducts.length} items</p>
       </div>
 
       {plainProducts.length === 0 ? (
