@@ -45,8 +45,7 @@ export default function ContactPage() {
 
       <div className="mt-12 text-gray-600">
         <p><strong>Email:</strong> flexters007@gmail.com</p>
-        <p><strong>Phone:</strong> +1 234 567 890</p>
-        <p><strong>Address:</strong> 123 Flex Street, NY, USA</p>
+        <p><strong>Phone:</strong> +92 370 11142040</p>
       </div>
     </section>
   );
