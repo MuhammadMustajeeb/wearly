@@ -120,22 +120,29 @@ export const AppContextProvider = ({ children }) => {
     const getCartAmount = () => {
         let totalAmount = 0;
         for (const itemKey in cartItems) {
-            const [productId] = itemKey.split(":"); // always first segment
-            const qty = cartItems[itemKey];
-            const itemInfo = products.find(p => p._id === productId);
-            if (itemInfo && qty > 0) totalAmount += itemInfo.offerPrice * qty;
-        }
+  const [productId, size, color] = itemKey.split(":");
+  const qty = cartItems[itemKey];
+  const itemInfo = products.find(p => p._id === productId);
+  if (itemInfo && qty > 0) {
+    totalAmount += getAdjustedPrice(itemInfo, size, color) * qty;
+  }
+}
+
         return Math.floor(totalAmount * 100) / 100;
     };
 
-    const getAdjustedPrice = (product, size) => {
+    const getAdjustedPrice = (product, size, color) => {
   if (!product) return 0;
   let price = product.offerPrice || 0;
 
+  // category-based price increase
   if (product.category?.toLowerCase() === "graphic") {
     if (size === "L") price = Math.round(price * 1.2105);
     else if (size === "XL") price = Math.round(price * 1.2);
   }
+  
+  // color-based price increase
+  if (color === "black") price += 200;
 
   return price;
 };

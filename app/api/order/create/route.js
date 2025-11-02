@@ -121,6 +121,11 @@ for (const item of cartItems) {
     unitPrice = Math.round(unitPrice * 1.2105); // +21% for L
   }
 
+  // apply color adjustment
+  if (item.color?.toLowerCase() === "black") {
+  unitPrice += 200; // +200 for black
+}
+
   const linePrice = unitPrice * item.quantity;
 
   orderItems.push({

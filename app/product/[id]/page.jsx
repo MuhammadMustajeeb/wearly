@@ -211,10 +211,10 @@ const Product = () => {
   };
 
   // compute display prices (changes if category === 'graphic' and size is large)
-const adjustedPrice = getAdjustedPrice(productData, selectedSize);
+const adjustedPrice = getAdjustedPrice(productData, selectedSize, selectedColor);
 const adjustedBasePrice = getAdjustedPrice(
   { ...productData, offerPrice: productData.price }, // base price variant
-  selectedSize
+  selectedSize, selectedColor
 );
 
 

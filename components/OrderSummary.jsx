@@ -12,6 +12,7 @@ const OrderSummary = () => {
     user,
     cartItems,
     setCartItems,
+    getAdjustedPrice,
   } = useAppContext();
 
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -19,36 +20,25 @@ const OrderSummary = () => {
   const [userAddresses, setUserAddresses] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("COD");
 
-  // ✅ Adjusted price logic (same as Cart)
-  const getAdjustedPrice = (product, size) => {
-    if (!product) return 0;
-
-    let displayPrice = product?.offerPrice || product?.price || 0;
-
-    if (product?.category?.toLowerCase() === "graphic" && size === "L") {
-      displayPrice = Math.round(displayPrice * 1.2105); // +10%
-    }
-
-    return displayPrice;
-  };
 
   // ✅ Compute total amount based on adjusted prices
   const getAdjustedCartAmount = () => {
-    let total = 0;
+  let total = 0;
 
-    Object.keys(cartItems).forEach((key) => {
-      const [productId, size, color] = key.split(":");
-      const qty = cartItems[key];
-      const product = products.find((p) => p._id === productId);
+  Object.keys(cartItems).forEach((key) => {
+    const [productId, size, color] = key.split(":");
+    const qty = cartItems[key];
+    const product = products.find((p) => p._id === productId);
 
-      if (!product || qty <= 0) return;
+    if (!product || qty <= 0) return;
 
-      const price = getAdjustedPrice(product, size);
-      total += price * qty;
-    });
+    const price = getAdjustedPrice(product, size, color);
+    total += price * qty;
+  });
 
-    return total;
-  };
+  return total;
+};
+
 
   const fetchUserAddresses = async () => {
     try {
@@ -82,7 +72,7 @@ const OrderSummary = () => {
       const [productId, size, color] = key.split(":");
       const qty = cartItems[key];
       const product = products.find((p) => p._id === productId);
-      const price = getAdjustedPrice(product, size);
+      const price = getAdjustedPrice(product, size, color);
 
       return {
         product: productId,

@@ -55,7 +55,7 @@ const Cart = () => {
                   const product = products.find((p) => p._id === productId);
                   const qty = cartItems[itemKey];
 
-                  const displayPrice = getAdjustedPrice(product, size);
+                  const displayPrice = getAdjustedPrice(product, size, color);
 
 
 
@@ -128,7 +128,7 @@ const Cart = () => {
                       </td>
 
                       <td className="py-4 md:px-4 px-1 text-gray-600">
-  Rs.{(getAdjustedPrice(product, size) * qty).toFixed(2)}
+  Rs.{(getAdjustedPrice(product, size, color) * qty).toFixed(2)}
 </td>
 
                     </tr>
