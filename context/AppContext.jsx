@@ -142,7 +142,7 @@ export const AppContextProvider = ({ children }) => {
   }
   
   // color-based price increase
-  if (color === "black") price += 200;
+  if (color === "black") price += 150;
 
   return price;
 };
