@@ -3,12 +3,29 @@ import Product from "@/models/Product";
 import ProductCard from "@/components/ProductCard";
 import React from "react";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
+
+  const titleMap = {
+    plain: "Plain T-Shirts – Minimal & Timeless Styles | Flexters",
+    bold: "Bold Tees – Statement Designs for Confidence | Flexters",
+    graphic: "Graphic T-Shirts – Express Yourself | Flexters",
+    offers: "Combo Offers – Pack of 2 & 3 Deals | Flexters",
+  };
+
+  const descriptionMap = {
+    plain: "Shop minimalist plain t-shirts in premium cotton. Perfect for everyday wear and effortless style.",
+    bold: "Discover bold t-shirts that speak confidence. Made for modern streetwear lovers.",
+    graphic: "Explore graphic tees with creative designs that define your personality.",
+    offers: "Grab our best combo deals and pack-of-2 t-shirts. Double the comfort, double the style.",
+  };
+
   return {
-    title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} T-Shirts - Flexters`,
+    title: titleMap[slug] || `Shop ${slug} - Flexters`,
+    description: descriptionMap[slug] || "Explore our latest t-shirt collections at Flexters.",
   };
 }
+
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -28,6 +45,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     plain: "Plain T-Shirts",
     bold: "Bold Tees",
     graphic: "Graphic Tees",
+    offers: "Combo Offers",
   };
   const title = titleMap[slug] || slug;
 

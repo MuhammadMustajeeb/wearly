@@ -19,7 +19,7 @@ const Banner = () => {
           Soft fabrics, modern fits, and timeless designs — your perfect tee awaits.
         </p>
         <Link
-  href="/all-products"
+  href="/offers"
   className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-[#d6c4b6] rounded text-white transition hover:opacity-90"
   aria-label="Grab the offer and explore our latest t-shirts"
 >
