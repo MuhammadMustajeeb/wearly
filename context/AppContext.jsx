@@ -136,10 +136,10 @@ export const AppContextProvider = ({ children }) => {
   let price = product.offerPrice || 0;
 
   // category-based price increase
-  if (product.category?.toLowerCase() === "graphic") {
-    if (size === "L") price = Math.round(price * 1.2105);
-    else if (size === "XL") price = Math.round(price * 1.2);
-  }
+//   if (product.category?.toLowerCase() === "graphic") {
+//     if (size === "L") price = Math.round(price * 1.2105);
+//     else if (size === "XL") price = Math.round(price * 1.2);
+//   }
   
   // color-based price increase
   if (color === "black") price += 150;
