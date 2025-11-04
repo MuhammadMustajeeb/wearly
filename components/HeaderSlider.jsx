@@ -8,7 +8,7 @@ const HeaderSlider = () => {
 
   const sliderData = [
     {
-      id: 1,
+      id: 2,
       title: "Look Effortless. Feel Unstoppable.",
       offer: "Premium Tees for Everyday Confidence",
       buttonText1: "Shop Everyday Essentials",
@@ -18,15 +18,16 @@ const HeaderSlider = () => {
       imgSrc: assets.post_two,
     },
     {
-      id: 2,
-      title: "Say It Without Saying It.",
-      offer: "Graphic Tees That Speak for You",
-      buttonText1: "Explore Graphic Collection",
-      buttonText2: "Shop Bold Styles",
-      buttonLink1: "/category/graphic",
-      buttonLink2: "/category/bold",
-      imgSrc: assets.post_one,
-    },
+  id: 1,
+  title: "Double the Style. Half the Price.",
+  offer: "🔥 Exclusive Combo Offers — 2 Tees, 1 Deal.",
+  buttonText1: "Shop Combo Offers",
+  buttonText2: "Limited Time Deals",
+  buttonLink1: "/offers",
+  buttonLink2: "/offers",
+  imgSrc: assets.post_one, // you can duplicate post_two or make a new offer banner image
+},
+
     {
       id: 4,
       title: "More Than Fabric — It’s How You Feel Wearing It.",
