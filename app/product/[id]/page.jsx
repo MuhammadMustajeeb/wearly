@@ -45,7 +45,11 @@ const Product = () => {
   const [showColorGuide, setShowColorGuide] = useState(false);
 
   // util fns
-  const normalizeColorKey = (c) => String(c || "").trim().toLowerCase().replace(/^#/, "");
+  const normalizeColorKey = (c) =>
+    String(c || "")
+      .trim()
+      .toLowerCase()
+      .replace(/^#/, "");
   const sanitizeColorForSearch = (c) => normalizeColorKey(c);
   const isValidCssColor = (c) => {
     if (!c) return false;
@@ -59,7 +63,8 @@ const Product = () => {
 
   // Build normalized imagesByColor for lookup
   const buildNormalizedImagesByColor = (product) => {
-    if (!product?.imagesByColor || typeof product.imagesByColor !== "object") return null;
+    if (!product?.imagesByColor || typeof product.imagesByColor !== "object")
+      return null;
     const normalized = {};
     for (const rawKey of Object.keys(product.imagesByColor)) {
       const key = normalizeColorKey(rawKey);
@@ -80,9 +85,13 @@ const Product = () => {
 
     const urlList = Array.isArray(product.image) ? product.image : [];
     const searchToken = sanitizeColorForSearch(color);
-    const matches = urlList.filter((u) => u.toLowerCase().includes(searchToken));
+    const matches = urlList.filter((u) =>
+      u.toLowerCase().includes(searchToken)
+    );
     if (matches.length) return matches;
-    const hexMatches = urlList.filter((u) => u.toLowerCase().includes(normColor));
+    const hexMatches = urlList.filter((u) =>
+      u.toLowerCase().includes(normColor)
+    );
     if (hexMatches.length) return hexMatches;
     return null;
   };
@@ -113,6 +122,13 @@ const Product = () => {
   }, [id, products.length]);
 
   useEffect(() => {
+  if (productData && (!productData.availableColors || productData.availableColors.length === 0)) {
+    setSelectedColor("default");
+  }
+}, [productData]);
+
+
+  useEffect(() => {
     if (!productData) return;
     const colorImages = findImagesForColor(productData, selectedColor);
     if (colorImages?.length) setMainImage(colorImages[0]);
@@ -127,7 +143,11 @@ const Product = () => {
     return dedupe(colorImages.length ? colorImages : fallback);
   };
 
-  const adjustedPrice = getAdjustedPrice(productData, selectedSize, selectedColor);
+  const adjustedPrice = getAdjustedPrice(
+    productData,
+    selectedSize,
+    selectedColor
+  );
   const adjustedBasePrice = getAdjustedPrice(
     { ...productData, offerPrice: productData.price },
     selectedSize,
@@ -142,7 +162,12 @@ const Product = () => {
           <div className="px-5 lg:px-16 xl:px-20">
             <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4 transition-all duration-300 ease-in-out">
               <Image
-                src={hoverImage || mainImage || productData.image[0] || assets.box_icon}
+                src={
+                  hoverImage ||
+                  mainImage ||
+                  productData.image[0] ||
+                  assets.box_icon
+                }
                 alt={productData.name || "product image"}
                 className="w-full h-auto object-cover mix-blend-multiply transition-all duration-300 ease-in-out"
                 width={1280}
@@ -155,8 +180,8 @@ const Product = () => {
                 <div
                   key={index}
                   onMouseEnter={() => setHoverImage(image)} // 👈 preview on hover
-                  onMouseLeave={() => setHoverImage(null)}  // revert
-                  onClick={() => setMainImage(image)}        // permanently select
+                  onMouseLeave={() => setHoverImage(null)} // revert
+                  onClick={() => setMainImage(image)} // permanently select
                   className="cursor-pointer rounded-lg overflow-hidden bg-gray-500/10 hover:opacity-80 transition"
                 >
                   <Image
@@ -173,13 +198,24 @@ const Product = () => {
 
           {/* Right: Product Info */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-medium text-gray-800/90 mb-4">{productData.name}</h1>
+            <h1 className="text-3xl font-medium text-gray-800/90 mb-4">
+              {productData.name}
+            </h1>
 
             <div className="flex items-center gap-2">
               {[...Array(4)].map((_, i) => (
-                <Image key={i} className="h-4 w-4" src={assets.star_icon} alt="star_icon" />
+                <Image
+                  key={i}
+                  className="h-4 w-4"
+                  src={assets.star_icon}
+                  alt="star_icon"
+                />
               ))}
-              <Image className="h-4 w-4" src={assets.star_dull_icon} alt="star_dull_icon" />
+              <Image
+                className="h-4 w-4"
+                src={assets.star_dull_icon}
+                alt="star_dull_icon"
+              />
               <p>(4.5)</p>
             </div>
 
@@ -241,27 +277,33 @@ const Product = () => {
               </div>
 
               <div className="flex gap-3 mt-3 items-center">
-                {(productData.availableColors || ["#000000", "#ffffff"]).map((color) => {
-                  const valid = isValidCssColor(color);
-                  return (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`w-10 h-10 rounded-full border flex items-center justify-center ${
-                        selectedColor === color ? "ring-2 ring-offset-2" : ""
-                      }`}
-                      title={color}
-                      aria-label={`Select color ${color}`}
-                      style={valid ? { background: color } : { background: "#ffffff" }}
-                    >
-                      {!valid && (
-                        <span className="text-xs text-gray-700">
-                          {String(color).charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                {(productData.availableColors || ["#000000", "#ffffff"]).map(
+                  (color) => {
+                    const valid = isValidCssColor(color);
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-10 h-10 rounded-full border flex items-center justify-center ${
+                          selectedColor === color ? "ring-2 ring-offset-2" : ""
+                        }`}
+                        title={color}
+                        aria-label={`Select color ${color}`}
+                        style={
+                          valid
+                            ? { background: color }
+                            : { background: "#ffffff" }
+                        }
+                      >
+                        {!valid && (
+                          <span className="text-xs text-gray-700">
+                            {String(color).charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  }
+                )}
               </div>
 
               <div className="mt-2 text-sm text-gray-600">
@@ -279,7 +321,13 @@ const Product = () => {
               <button
                 onClick={() => {
                   if (!selectedSize) return toast.error("Please select a size");
-                  if (!selectedColor) return toast.error("Please select a color");
+                  if (
+                    (productData.availableColors?.length ?? 0) > 0 &&
+                    !selectedColor
+                  ) {
+                    return toast.error("Please select a color");
+                  }
+
                   addToCart(productData._id, selectedSize, selectedColor);
                 }}
                 className="w-full py-3.5 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
@@ -290,7 +338,13 @@ const Product = () => {
               <button
                 onClick={() => {
                   if (!selectedSize) return toast.error("Please select a size");
-                  if (!selectedColor) return toast.error("Please select a color");
+                  if (
+                    (productData.availableColors?.length ?? 0) > 0 &&
+                    !selectedColor
+                  ) {
+                    return toast.error("Please select a color");
+                  }
+
                   addToCart(productData._id, selectedSize, selectedColor);
                   router.push("/cart");
                 }}
