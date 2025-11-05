@@ -22,7 +22,7 @@ const MobileStickyCTA = () => {
   return (
     <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50">
       <button
-        onClick={() => (window.location.href = "/category/offers")}
+        onClick={() => (window.location.href = "/offers")}
         className="flex items-center gap-2 px-6 py-3 bg-[#d6c4b6] text-white font-medium rounded-full shadow-md hover:scale-105 transition-transform"
       >
         🔥 Grab the Offer

@@ -40,7 +40,7 @@ const ExitIntentOffer = () => {
         </p>
 
         <a
-          href="/category/offers"
+          href="/offers"
           className="mt-4 inline-block bg-[#d6c4b6] text-white px-5 py-2.5 rounded-full font-medium hover:opacity-90 transition"
         >
           View Offers
