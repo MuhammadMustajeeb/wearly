@@ -43,7 +43,7 @@ const Footer = () => {
             </a>
 
             <a
-              href="https://wa.me/9237011142040"
+              href="https://wa.me/923701114204"
               target="_blank"
               className="p-2 rounded-full border hover:bg-gray-900 hover:text-white transition"
             >
@@ -70,7 +70,7 @@ const Footer = () => {
           <div>
             <h2 className="font-medium text-gray-900 mb-5">Get in touch</h2>
             <div className="text-sm space-y-2">
-              <p>+92 370 11142040</p>
+              <p>+92 370 1114204</p>
               <p>flexters007@gmail.com</p>
             </div>
           </div>

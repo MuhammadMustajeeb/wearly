@@ -9,7 +9,7 @@ export default function WhatsappButton() {
       className="fixed bottom-5 right-5 z-50"
     >
       <img
-        src="/whatsapp-icon.png"
+        src="/whatsapp.webp"
         alt="WhatsApp Chat"
         className="w-14 h-14 drop-shadow-lg"
       />

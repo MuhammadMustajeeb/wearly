@@ -7,6 +7,7 @@ import NewsLetter from "@/components/NewsLetter";
 import FeaturedProduct from "@/components/FeaturedProduct";
 import MobileStickyCTA from "@/components/MobileStickCTA";
 import ExitIntentOffer from "@/components/ExitIntentOffer";
+import WhatsappButton from "@/components/WhatsappButton";
 
 const Home = () => {
 
@@ -20,6 +21,7 @@ const Home = () => {
         {/* <NewsLetter /> */}
         <MobileStickyCTA />
         {/* <ExitIntentOffer /> */}
+        <WhatsappButton />
 
       </div>
     </>
