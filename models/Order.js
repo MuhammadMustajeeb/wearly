@@ -14,7 +14,11 @@ const orderSchema = new mongoose.Schema({
   shippingFee: { type: Number, default: 0 },
   amount: { type: Number, required: true },
   address: { type: mongoose.Schema.Types.ObjectId, ref: "address", required: true },
-  paymentMethod: { type: String, enum: ["COD", "EASYPAISA", "JAZZCASH"], required: true },
+  paymentMethod: {
+  type: String,
+  enum: ["COD", "BANKTRANSFER"],
+  required: true,
+},
   paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
   orderStatus: { type: String, enum: ["placed", "shipped", "delivered", "cancelled"], default: "placed" },
   date: { type: Number, required: true },

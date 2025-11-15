@@ -19,7 +19,7 @@ const Home = () => {
         <Banner />
         {/* <NewsLetter /> */}
         <MobileStickyCTA />
-        <ExitIntentOffer />
+        {/* <ExitIntentOffer /> */}
 
       </div>
     </>

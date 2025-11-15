@@ -234,42 +234,59 @@ const OrderSummary = () => {
       </div>
 
       {/* Payment method */}
-      <hr className="border-gray-500/30 my-5" />
+<hr className="border-gray-500/30 my-5" />
 
-      <div>
-        <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-          Payment Method
-        </label>
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="COD"
-              checked={paymentMethod === "COD"}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            Cash on Delivery
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="EASYPAISA"
-              checked={paymentMethod === "EASYPAISA"}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            Easypaisa (Coming soon)
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="JAZZCASH"
-              checked={paymentMethod === "JAZZCASH"}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            JazzCash (Coming soon)
-          </label>
-        </div>
+<div>
+  <label className="text-base font-medium uppercase text-gray-600 block mb-2">
+    Payment Method
+  </label>
+  <div className="flex flex-col gap-2">
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="COD"
+        checked={paymentMethod === "COD"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      Cash on Delivery
+    </label>
+
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        name="paymentMethod"
+        value="BANKTRANSFER" // ✅ uppercase to match backend
+        checked={paymentMethod === "BANKTRANSFER"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      Bank Transfer
+    </label>
+
+    {paymentMethod === "BANKTRANSFER" && (
+      <div className="mt-3 p-3 border border-gray-300 bg-gray-50 rounded-md text-sm">
+        <p className="font-semibold mb-1">Bank Account Details</p>
+        <p>Meezan Bank</p>
+        <p>Account Title: SOBAN ZAHID MEMON</p>
+        <p>Account No: 01040109328838</p>
+        <p>IBAN: PK61MEZN0001040109328838</p>
+        <p className="text-xs text-gray-600 mt-2">
+          After sending payment, please upload your receipt or contact support to verify.
+        </p>
       </div>
+    )}
+
+    {/* <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="JAZZCASH"
+        checked={paymentMethod === "JAZZCASH"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      JazzCash (Coming soon)
+    </label> */}
+  </div>
+</div>
+
 
       <button
         onClick={createOrder}

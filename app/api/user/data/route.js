@@ -19,7 +19,7 @@ console.log("Collections:", await mongooseConn.db.listCollections().toArray());
 
         const user = await User.findById(userId);
 
-        console.log("Mongoo user",user);
+        console.log("Mongoo user",user); 
         console.log("Clerk user id",userId);
 
         const allUsers = await User.find({}, "_id email name");

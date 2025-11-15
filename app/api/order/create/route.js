@@ -7,7 +7,7 @@ import Order from "@/models/Order";
 import User from "@/models/User";
 import mongoose from "mongoose";
 
-const ALLOWED_PAYMENT_METHODS = ["COD", "EASYPAISA", "JAZZCASH"];
+const ALLOWED_PAYMENT_METHODS = ["COD", "EASYPAISA", "JAZZCASH", "BANKTRANSFER"];
 
 export async function POST(request) {
   try {
@@ -145,6 +145,17 @@ totalAmount += shippingFee;
 
 
 console.log("[ORDER CREATE] orderItems:", orderItems, "totalAmount:", totalAmount);
+
+// 💳 Handle payment-specific logic
+let paymentStatus = "pending"; // default for all
+
+if (paymentMethod === "COD") {
+  paymentStatus = "pending"; // will mark paid after delivery
+} else if (["EASYPAISA", "JAZZCASH", "BANKTRANSFER"].includes(paymentMethod)) {
+  // these require manual transfer or verification
+  paymentStatus = "pending";
+  // Optionally: you could store a transaction ID or proof later
+}
 
     // 9️⃣ Create order
     const newOrder = await Order.create({
