@@ -21,7 +21,7 @@ const Home = () => {
         {/* <NewsLetter /> */}
         <MobileStickyCTA />
         {/* <ExitIntentOffer /> */}
-        <WhatsappButton />
+        <WhatsappButton phone="923701114204" defaultMessage="Hi! I have a question about my order." />
 
       </div>
     </>

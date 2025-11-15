@@ -55,7 +55,7 @@ import post_banner_three from "./post_banner_three.webp"
 import basic_shirts from "./basic_shirts.webp"
 import basic_shirts_one from "./basic_shirts_one.webp"
 import size_guie_image from "./size_guide_image.webp"
-import whatsapp_icon from "./whatsapp.webp"
+
 
 export const assets = {
   logo,
@@ -115,7 +115,6 @@ export const assets = {
   basic_shirts,
   basic_shirts_one,
   size_guie_image,
-  whatsapp_icon,
 };
 
 export const BagIcon = () => {
