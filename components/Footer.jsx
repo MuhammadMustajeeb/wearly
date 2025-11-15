@@ -35,7 +35,7 @@ const Footer = () => {
             </a>
 
             <a
-              href="https://tiktok.com"
+              href="https://www.tiktok.com/@flexters007?_t=ZS-904ZWTYFZKf&_r=1"
               target="_blank"
               className="p-2 rounded-full border hover:bg-gray-900 hover:text-white transition"
             >
