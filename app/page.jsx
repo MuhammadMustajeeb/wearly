@@ -19,7 +19,7 @@ const Home = () => {
         <FeaturedProduct />
         <Banner />
         {/* <NewsLetter /> */}
-        <MobileStickyCTA />
+        {/* <MobileStickyCTA /> */}
         {/* <ExitIntentOffer /> */}
         <WhatsappButton phone="923701114204" defaultMessage="Hi! I have a question about my order." />
 
