@@ -8,6 +8,7 @@ import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
 import React from "react";
 import toast from "react-hot-toast";
+import ProductReviews from "@/components/reviews/ProductReviews";
 
 /**
  * Product page with:
@@ -420,6 +421,11 @@ const Product = () => {
           </div>
         </div>
       )}
+
+      <div className="mt-20 px-6 md:px-16 lg:px-32">
+  <ProductReviews productId={id} />
+</div>
+
     </>
   );
 };
