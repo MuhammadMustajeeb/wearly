@@ -11,6 +11,8 @@ const productSchema = new mongoose.Schema({
     category: {type: String, required: true},
     availableSizes: { type: [String], default: ["M", "L"] },
     availableColors: { type: [String], default: [] },
+    outOfStockColors: { type: [String], default: ["beige", "gray"] },
+
     date: {type: Number, required: true}
 })
 

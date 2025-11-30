@@ -15,6 +15,12 @@ import ProductReviews from "@/components/reviews/ProductReviews";
  * ✅ Color → image switching
  * ✅ Hover thumbnail preview (like Daraz/Nike)
  * ✅ Color name mapping for hex codes
+ * ✅ TEMP out-of-stock per-color (Option B)
+ *
+ * Option B behaviour:
+ * - If product has availableColors -> outOfStockColors applies per color.
+ * - If product has NO availableColors -> attempt to auto-detect color from product name
+ *   using keywords (Beige, Gray). If detected and present in outOfStockColors -> treat as out-of-stock.
  */
 
 const colorMap = {
@@ -27,6 +33,11 @@ const colorMap = {
   "#bebebe": "Gray",
   "#0e43ad": "Blue",
 };
+
+// --- auto-detect color keywords (from your last message)
+// We'll use the human-readable names (Beige, Gray) to detect in product names.
+// You can expand this list later.
+const AUTO_COLOR_KEYWORDS = ["Beige", "Gray"];
 
 const Product = () => {
   const { id } = useParams();
@@ -61,6 +72,30 @@ const Product = () => {
   };
 
   const dedupe = (arr = []) => Array.from(new Set(arr.filter(Boolean)));
+
+  // Map a color value (hex or name) to a readable color name for checking outOfStockColors
+  const getColorName = (color) => {
+    if (!color) return null;
+    // if hex or starts with #
+    const key = String(color).trim();
+    // direct lookup in colorMap (keys normalized in colorMap include hex with # and plain names)
+    // try exact key first
+    if (colorMap[key]) return colorMap[key];
+    // try normalized forms
+    const lower = key.toLowerCase();
+    if (colorMap[lower]) return colorMap[lower];
+    // check hex normalized (without #)
+    if (key.startsWith("#")) {
+      const hexLower = key.toLowerCase();
+      if (colorMap[hexLower]) return colorMap[hexLower];
+    }
+    // fallback: if input is a textual color, return title-cased version
+    // e.g., "beige" -> "Beige"
+    if (!key.startsWith("#")) {
+      return key.charAt(0).toUpperCase() + key.slice(1);
+    }
+    return key;
+  };
 
   // Build normalized imagesByColor for lookup
   const buildNormalizedImagesByColor = (product) => {
@@ -97,6 +132,44 @@ const Product = () => {
     return null;
   };
 
+  // --- NEW: determine an auto-detected color from product name (for no-color products)
+  const detectColorFromName = (product) => {
+    if (!product?.name) return null;
+    const nameLower = product.name.toLowerCase();
+    for (const kw of AUTO_COLOR_KEYWORDS) {
+      if (nameLower.includes(kw.toLowerCase())) {
+        return kw; // return human-readable name (e.g., "Beige")
+      }
+    }
+    return null;
+  };
+
+  // Determine if color (or detected color) is out of stock for this product
+  const isColorOutOfStock = (product, color) => {
+    // product.outOfStockColors expected to be array of strings (prefer lowercase saved in DB)
+    if (!product) return false;
+    const outList = (product.outOfStockColors || []).map((c) => String(c).toLowerCase());
+    // if product has explicit isOutOfStock flag (whole product), consider that too
+    if (product.isOutOfStock) return true;
+
+    // if color is null and product has no colors, try detect from name
+    let resolvedColor = color;
+    const hasColors = Array.isArray(product.availableColors) && product.availableColors.length > 0;
+
+    if ((!resolvedColor || resolvedColor === "default") && !hasColors) {
+      const detected = detectColorFromName(product); // returns human name like "Beige"
+      resolvedColor = detected;
+    }
+
+    if (!resolvedColor) return false;
+
+    // map hex to color name when necessary
+    const colorName = getColorName(resolvedColor);
+    if (!colorName) return false;
+
+    return outList.includes(String(colorName).toLowerCase());
+  };
+
   // Fetch product
   const fetchProductData = async () => {
     const product = products.find((p) => p._id === id);
@@ -106,11 +179,24 @@ const Product = () => {
     const initialSize = product.availableSizes?.[0] ?? "M";
     setSelectedSize(initialSize);
 
+    // initial color: prefer the first availableColor, else fallback to imagesByColor, else detect from name, else null/default
     let initialColor = product.availableColors?.[0] ?? null;
     if (!initialColor) {
       const normalizedMap = buildNormalizedImagesByColor(product);
       if (normalizedMap) initialColor = Object.keys(normalizedMap)[0];
     }
+
+    // If still no color, attempt auto-detect from product name (Option B)
+    if (!initialColor) {
+      const detected = detectColorFromName(product);
+      if (detected) {
+        initialColor = detected;
+      }
+    }
+
+    // As a last fallback, if no color at all, set to "default" (earlier behaviour)
+    if (!initialColor) initialColor = "default";
+
     setSelectedColor(initialColor);
 
     const colorImages = findImagesForColor(product, initialColor);
@@ -123,11 +209,13 @@ const Product = () => {
   }, [id, products.length]);
 
   useEffect(() => {
-  if (productData && (!productData.availableColors || productData.availableColors.length === 0)) {
-    setSelectedColor("default");
-  }
-}, [productData]);
-
+    if (productData && (!productData.availableColors || productData.availableColors.length === 0)) {
+      // try to retain detected color or set default
+      const detected = detectColorFromName(productData);
+      setSelectedColor(detected ?? "default");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productData]);
 
   useEffect(() => {
     if (!productData) return;
@@ -154,6 +242,9 @@ const Product = () => {
     selectedSize,
     selectedColor
   );
+
+  // determine resolved out-of-stock state for UI (button disabling etc)
+  const colorOut = isColorOutOfStock(productData, selectedColor);
 
   return (
     <>
@@ -281,15 +372,20 @@ const Product = () => {
                 {(productData.availableColors || ["#000000", "#ffffff"]).map(
                   (color) => {
                     const valid = isValidCssColor(color);
+                    // For display/title we prefer the mapped name (if available)
+                    const displayName = getColorName(color) || color;
+                    const thisColorOut = isColorOutOfStock(productData, color);
+
                     return (
                       <button
                         key={color}
-                        onClick={() => setSelectedColor(color)}
+                        onClick={() => !thisColorOut && setSelectedColor(color)}
+                        disabled={thisColorOut}
                         className={`w-10 h-10 rounded-full border flex items-center justify-center ${
                           selectedColor === color ? "ring-2 ring-offset-2" : ""
-                        }`}
-                        title={color}
-                        aria-label={`Select color ${color}`}
+                        } ${thisColorOut ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                        title={thisColorOut ? `${displayName} is Out of Stock` : displayName}
+                        aria-label={`Select color ${displayName}`}
                         style={
                           valid
                             ? { background: color }
@@ -311,47 +407,54 @@ const Product = () => {
                 Selected:{" "}
                 <span className="font-medium">
                   {selectedColor
-                    ? colorMap[selectedColor] || selectedColor
+                    ? getColorName(selectedColor) || selectedColor
                     : "—"}
                 </span>
               </div>
+
+              {/* show out-of-stock when selected or detected */}
+              {selectedColor && isColorOutOfStock(productData, selectedColor) && (
+                <p className="text-red-500 text-sm mt-2">This color is Out of Stock</p>
+              )}
+
+              {/* if product has no colors but an auto-detected color exists and is out of stock */}
+              {!productData.availableColors?.length && detectColorFromName(productData) && isColorOutOfStock(productData, detectColorFromName(productData)) && (
+                <p className="text-red-500 text-sm mt-2">This product (detected color: {detectColorFromName(productData)}) is Out of Stock</p>
+              )}
             </div>
 
             {/* Cart buttons */}
             <div className="flex items-center mt-10 gap-4">
               <button
+                disabled={colorOut}
                 onClick={() => {
+                  if (colorOut) return toast.error("This color is Out of Stock!");
                   if (!selectedSize) return toast.error("Please select a size");
-                  if (
-                    (productData.availableColors?.length ?? 0) > 0 &&
-                    !selectedColor
-                  ) {
+                  // If product has colors but user hasn't selected one, block
+                  if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
                     return toast.error("Please select a color");
                   }
-
                   addToCart(productData._id, selectedSize, selectedColor);
                 }}
-                className="w-full py-3.5 bg-gray-100 text-gray-800 hover:bg-gray-200 transition"
+                className={`w-full py-3.5 ${colorOut ? "bg-gray-300 cursor-not-allowed" : "bg-gray-100 text-gray-800 hover:bg-gray-200"} transition`}
               >
-                Add to Cart
+                {colorOut ? "Out of Stock" : "Add to Cart"}
               </button>
 
               <button
+                disabled={colorOut}
                 onClick={() => {
+                  if (colorOut) return toast.error("This color is Out of Stock!");
                   if (!selectedSize) return toast.error("Please select a size");
-                  if (
-                    (productData.availableColors?.length ?? 0) > 0 &&
-                    !selectedColor
-                  ) {
+                  if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
                     return toast.error("Please select a color");
                   }
-
                   addToCart(productData._id, selectedSize, selectedColor);
                   router.push("/cart");
                 }}
-                className="w-full py-3.5 bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7] transition"
+                className={`w-full py-3.5 ${colorOut ? "bg-gray-300 cursor-not-allowed" : "bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7]"} transition`}
               >
-                Buy now
+                {colorOut ? "Out of Stock" : "Buy now"}
               </button>
             </div>
           </div>
@@ -423,9 +526,8 @@ const Product = () => {
       )}
 
       <div className="mt-20 px-6 md:px-16 lg:px-32">
-  <ProductReviews productId={id} />
-</div>
-
+        <ProductReviews productId={id} />
+      </div>
     </>
   );
 };
