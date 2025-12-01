@@ -26,6 +26,8 @@ import ProductReviews from "@/components/reviews/ProductReviews";
 const colorMap = {
   black: "Black",
   white: "White",
+  "#c8a2c8": "Lilac",
+  "#36454f": "Charcoal",
   "#bd6a7c": "Pink",
   "#59251c": "Brown",
   "#a6072e": "Red",
@@ -37,7 +39,7 @@ const colorMap = {
 // --- auto-detect color keywords (from your last message)
 // We'll use the human-readable names (Beige, Gray) to detect in product names.
 // You can expand this list later.
-const AUTO_COLOR_KEYWORDS = ["Beige", "Gray"];
+const AUTO_COLOR_KEYWORDS = ["Gray"];
 
 const Product = () => {
   const { id } = useParams();
