@@ -34,6 +34,8 @@ const colorMap = {
   "#ebd3b2": "Beige",
   "#bebebe": "Gray",
   "#0e43ad": "Blue",
+  "#800000": "Maroon",
+  "#084C41": "Bottle Green",
 };
 
 // --- auto-detect color keywords (from your last message)

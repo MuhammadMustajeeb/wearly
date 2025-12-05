@@ -17,7 +17,7 @@ const AddProduct = () => {
   const [offerPrice, setOfferPrice] = useState('');
 
   const [availableColors, setAvailableColors] = useState([]); // start empty
-  const colorOptions = ['black', 'white', '#bd6a7c', '#59251c', '#a6072e', '#ebd3b2', '#BEBEBE', '#0e43ad', '#c8a2c8', '#36454f'];
+  const colorOptions = ['black', 'white', '#bd6a7c', '#59251c', '#a6072e', '#ebd3b2', '#BEBEBE', '#0e43ad', '#c8a2c8', '#36454f', '#800000', '#084C41'];
 
   // colorFiles: { colorKey: File[] }
   const [colorFiles, setColorFiles] = useState({});
