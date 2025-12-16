@@ -8,36 +8,39 @@ const HeaderSlider = () => {
 
   const sliderData = [
     {
-      id: 2,
-      title: "Look Effortless. Feel Unstoppable.",
-      offer: "Premium Tees for Everyday Confidence",
-      buttonText1: "Shop Everyday Essentials",
-      buttonText2: "Discover Your Fit",
-      buttonLink1: "/category/plain",
-      buttonLink2: "/all-products",
-      imgSrc: assets.post_two,
-    },
-    {
   id: 1,
-  title: "Double the Style. Half the Price.",
-  offer: "🔥 Exclusive Combo Offers — 2 Tees, 1 Deal.",
-  buttonText1: "Shop Combo Offers",
-  buttonText2: "Limited Time Deals",
-  buttonLink1: "/offers",
-  buttonLink2: "/offers",
-  imgSrc: assets.post_one, // you can duplicate post_two or make a new offer banner image
-},
+  title: "Winter Starts Here.",
+  offer: "Premium Hoodies Built for Warmth, Comfort & Style",
+  buttonText1: "Shop Winter Hoodies",
+  buttonText2: "Explore New Arrivals",
+  buttonLink1: "/category/plain",
+  buttonLink2: "/all-products",
+  imgSrc: assets.post_one,
+}
+,
+    {
+  id: 2,
+  title: "Warmth You Can Feel. Style You Can See.",
+  offer: "Everyday Hoodies Designed for Cold Days & Cool Nights",
+  buttonText1: "Shop Everyday Hoodies",
+  buttonText2: "Find Your Perfect Fit",
+  buttonLink1: "/category/graphic",
+  buttonLink2: "/all-products",
+  imgSrc: assets.post_two,
+}
+,
 
     {
-      id: 4,
-      title: "More Than Fabric — It’s How You Feel Wearing It.",
-      offer: "Designed to Move With You, Not Against You",
-      buttonText1: "Feel the Difference",
-      buttonText2: "Join the Movement",
-      buttonLink1: "/all-products",
-      buttonLink2: "/about",
-      imgSrc: assets.post_three,
-    },
+  id: 3,
+  title: "Layer Up. Stand Out.",
+  offer: "Minimal Winter Essentials for Modern Living",
+  buttonText1: "Discover Winter Collection",
+  buttonText2: "About Our Craft",
+  buttonLink1: "/all-products",
+  buttonLink2: "/category/graphic",
+  imgSrc: assets.post_three,
+}
+,
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
