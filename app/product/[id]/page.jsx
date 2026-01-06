@@ -23,6 +23,10 @@ import ProductReviews from "@/components/reviews/ProductReviews";
  *   using keywords (Beige, Gray). If detected and present in outOfStockColors -> treat as out-of-stock.
  */
 
+// whatsapp number for contact button
+const WHATSAPP_NUMBER = "+923701114204"; // Pakistan number, no +
+
+
 const colorMap = {
   black: "Black",
   white: "White",
@@ -163,7 +167,7 @@ const Product = () => {
     if ((!resolvedColor || resolvedColor === "default") && !hasColors) {
       const detected = detectColorFromName(product); // returns human name like "Beige"
       resolvedColor = detected;
-    }
+    } 
 
     if (!resolvedColor) return false;
 
@@ -249,6 +253,36 @@ const Product = () => {
 
   // determine resolved out-of-stock state for UI (button disabling etc)
   const colorOut = isColorOutOfStock(productData, selectedColor);
+
+  // whatsapp chat option
+  const openWhatsApp = () => {
+  if (!productData) return;
+
+  const productName = productData.name;
+  const sizeText = selectedSize ? `Size: ${selectedSize}` : "Size: Not selected";
+  const colorText =
+    selectedColor && selectedColor !== "default"
+      ? `Color: ${getColorName(selectedColor)}`
+      : "Color: Not applicable";
+
+  const message = `
+Hello 👋
+I want to customize this product:
+
+Product: ${productName}
+${sizeText}
+${colorText}
+
+Please guide me about customization options.
+`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    message
+  )}`;
+
+  window.open(url, "_blank");
+};
+
 
   return (
     <>
@@ -427,40 +461,59 @@ const Product = () => {
               )}
             </div>
 
-            {/* Cart buttons */}
-            <div className="flex items-center mt-10 gap-4">
-              <button
-                disabled={colorOut}
-                onClick={() => {
-                  if (colorOut) return toast.error("This color is Out of Stock!");
-                  if (!selectedSize) return toast.error("Please select a size");
-                  // If product has colors but user hasn't selected one, block
-                  if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
-                    return toast.error("Please select a color");
-                  }
-                  addToCart(productData._id, selectedSize, selectedColor);
-                }}
-                className={`w-full py-3.5 ${colorOut ? "bg-gray-300 cursor-not-allowed" : "bg-gray-100 text-gray-800 hover:bg-gray-200"} transition`}
-              >
-                {colorOut ? "Out of Stock" : "Add to Cart"}
-              </button>
+            {/* Cart / Customization buttons */}
+<div className="flex items-center mt-10 gap-4">
+  {productData.isCustomizable ? (
+    <button
+      onClick={openWhatsApp}
+      className="w-full py-3.5 bg-green-600 text-white hover:bg-green-700 transition rounded"
+    >
+      Customize on WhatsApp
+    </button>
+  ) : (
+    <>
+      <button
+        disabled={colorOut}
+        onClick={() => {
+          if (colorOut) return toast.error("This color is Out of Stock!");
+          if (!selectedSize) return toast.error("Please select a size");
+          if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
+            return toast.error("Please select a color");
+          }
+          addToCart(productData._id, selectedSize, selectedColor);
+        }}
+        className={`w-full py-3.5 ${
+          colorOut
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+        } transition`}
+      >
+        {colorOut ? "Out of Stock" : "Add to Cart"}
+      </button>
 
-              <button
-                disabled={colorOut}
-                onClick={() => {
-                  if (colorOut) return toast.error("This color is Out of Stock!");
-                  if (!selectedSize) return toast.error("Please select a size");
-                  if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
-                    return toast.error("Please select a color");
-                  }
-                  addToCart(productData._id, selectedSize, selectedColor);
-                  router.push("/cart");
-                }}
-                className={`w-full py-3.5 ${colorOut ? "bg-gray-300 cursor-not-allowed" : "bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7]"} transition`}
-              >
-                {colorOut ? "Out of Stock" : "Buy now"}
-              </button>
-            </div>
+      <button
+        disabled={colorOut}
+        onClick={() => {
+          if (colorOut) return toast.error("This color is Out of Stock!");
+          if (!selectedSize) return toast.error("Please select a size");
+          if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
+            return toast.error("Please select a color");
+          }
+          addToCart(productData._id, selectedSize, selectedColor);
+          router.push("/cart");
+        }}
+        className={`w-full py-3.5 ${
+          colorOut
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7]"
+        } transition`}
+      >
+        {colorOut ? "Out of Stock" : "Buy now"}
+      </button>
+    </>
+  )}
+</div>
+
           </div>
         </div>
 
