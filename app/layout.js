@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Script from "next/script"; // ✅ ADD THIS
+import MaintenanceBanner from "@/components/MaintenanceBanner";
 
 const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"] });
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
         <body className={`${outfit.className} antialiased text-gray-700`}>
           <Toaster />
           <AppContextProvider>
+            <MaintenanceBanner />
             <Header />
             <main className="min-h-screen">{children}</main>
             <Footer />
