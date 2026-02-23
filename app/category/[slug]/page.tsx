@@ -74,7 +74,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-2">
           {plainProducts.map((p) => (
-            <ProductCard key={p._id} product={p} variant="tall" />
+            <ProductCard key={p._id} product={p} />
           ))}
         </div>
       )}
@@ -88,7 +88,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             theme="light" subtitle={undefined} actionText={undefined} onAction={undefined}          />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-2 mt-6">
             {plainProducts.slice(0, 4).map((p) => (
-              <ProductCard key={p._id} product={p} variant="tall" />
+              <ProductCard key={p._id} product={p} />
             ))}
           </div>
         </div>
