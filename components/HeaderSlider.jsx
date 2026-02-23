@@ -1,133 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { assets } from "@/assets/assets";
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { assets } from "@/assets/assets";
 
-const HeaderSlider = () => {
+const categorySlides = [
+  { slug: "plain", image: assets.hero_polo },
+  { slug: "bold", image: assets.post_two },
+  { slug: "graphic", image: assets.hero_graphic },
+  { slug: "polos", image: assets.post_one },
+  { slug: "hoodies", image: assets.post_two },
+  { slug: "customization", image: assets.post_three },
+];
+
+export default function HeaderSlider() {
   const router = useRouter();
+  const [current, setCurrent] = useState(0);
+  const totalSlides = categorySlides.length;
 
-  const sliderData = [
-    {
-  id: 1,
-  title: "Winter Starts Here.",
-  offer: "Premium Hoodies Built for Warmth, Comfort & Style",
-  buttonText1: "Shop Winter Hoodies",
-  buttonText2: "Explore New Arrivals",
-  buttonLink1: "/category/plain",
-  buttonLink2: "/all-products",
-  imgSrc: assets.post_one,
-}
-,
-    {
-  id: 2,
-  title: "Warmth You Can Feel. Style You Can See.",
-  offer: "Everyday Hoodies Designed for Cold Days & Cool Nights",
-  buttonText1: "Shop Everyday Hoodies",
-  buttonText2: "Find Your Perfect Fit",
-  buttonLink1: "/category/graphic",
-  buttonLink2: "/all-products",
-  imgSrc: assets.post_two,
-}
-,
+  const nextSlide = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % totalSlides);
+  }, [totalSlides]);
 
-    {
-  id: 3,
-  title: "Layer Up. Stand Out.",
-  offer: "Minimal Winter Essentials for Modern Living",
-  buttonText1: "Discover Winter Collection",
-  buttonText2: "About Our Craft",
-  buttonLink1: "/all-products",
-  buttonLink2: "/category/graphic",
-  imgSrc: assets.post_three,
-}
-,
-  ];
+  const prevSlide = useCallback(() => {
+    setCurrent((prev) =>
+      prev === 0 ? totalSlides - 1 : prev - 1
+    );
+  }, [totalSlides]);
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-
+  // Mouse wheel
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % sliderData.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [sliderData.length]);
+    const handleWheel = (e) => {
+      if (e.deltaY > 0) nextSlide();
+      else prevSlide();
+    };
 
-  const handleSlideChange = (index) => {
-    setCurrentSlide(index);
-  };
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [nextSlide, prevSlide]);
 
-  const handleButtonClick = (link) => {
-    router.push(link);
-  };
+  // Keyboard arrows
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "ArrowDown") nextSlide();
+      if (e.key === "ArrowUp") prevSlide();
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [nextSlide, prevSlide]);
 
   return (
-    <div className="overflow-hidden relative w-full">
-      <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{
-          transform: `translateX(-${currentSlide * 100}%)`,
-        }}
-      >
-        {sliderData.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="flex flex-col-reverse md:flex-row items-center justify-between bg-[#E6E9F2] md:px-16 px-6 py-12 mt-6 rounded-2xl min-w-full min-h-[70vh]"
-          >
-            {/* Text Section */}
-            <div className="md:pl-8 mt-10 md:mt-0 flex-1">
-              <p className="md:text-base text-[#d6c4b6] pb-2">
-                {slide.offer}
-              </p>
-              <h1 className="max-w-lg md:text-[44px] md:leading-[54px] text-3xl font-semibold text-gray-800">
-                {slide.title}
-              </h1>
-              <div className="flex items-center mt-5 md:mt-8 space-x-4">
-                <button
-                  onClick={() => handleButtonClick(slide.buttonLink1)}
-                  className="md:px-10 px-7 md:py-3 py-2 bg-[#d6c4b6] hover:bg-[#c8b19e] transition rounded-full text-white font-medium"
-                >
-                  {slide.buttonText1}
-                </button>
-                <button
-                  onClick={() => handleButtonClick(slide.buttonLink2)}
-                  className="group flex items-center gap-2 px-6 py-2.5 font-medium text-gray-700 hover:text-[#d6c4b6]"
-                >
-                  {slide.buttonText2}
-                  <Image
-                    className="group-hover:translate-x-1 transition"
-                    src={assets.arrow_icon}
-                    alt="arrow_icon"
-                  />
-                </button>
-              </div>
-            </div>
+    <section className="relative h-screen w-full overflow-hidden">
 
-            {/* Image Section */}
-            <div className="flex items-center justify-center flex-1">
-              <Image
-                className="md:w-96 w-60 object-contain"
-                src={slide.imgSrc}
-                alt={`Slide ${index + 1}`}
-              />
-            </div>
+      {/* Slides Wrapper */}
+      <div
+        className="absolute inset-0 transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateY(-${current * 100}vh)` }}
+      >
+        {categorySlides.map((slide, index) => (
+          <div
+            key={index}
+            className="relative h-screen w-full cursor-pointer"
+            onClick={() => router.push(`/category/${slide.slug}`)}
+          >
+            <Image
+              src={slide.image}
+              alt={slide.slug}
+              fill
+              priority
+              className="object-cover"
+            />
           </div>
         ))}
       </div>
 
-      {/* Dots */}
-      <div className="flex items-center justify-center gap-2 mt-6 mb-4">
-        {sliderData.map((_, index) => (
-          <div
+      {/* Dots Indicator */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-10">
+        {categorySlides.map((_, index) => (
+          <button
             key={index}
-            onClick={() => handleSlideChange(index)}
-            className={`h-3 w-3 rounded-full cursor-pointer ${
-              currentSlide === index ? "bg-[#d6c4b6]" : "bg-gray-400/30"
+            onClick={() => setCurrent(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              current === index
+                ? "bg-white scale-125"
+                : "bg-white/50"
             }`}
-          ></div>
+          />
         ))}
       </div>
-    </div>
-  );
-};
 
-export default HeaderSlider;
+    </section>
+  );
+}

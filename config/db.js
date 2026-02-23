@@ -26,4 +26,4 @@ async function connectDB() {
 
 }
 
-export default connectDB; // exporting the function to be used in other files and it's way to connect to the database
+export default connectDB; // exporting the function to be used in other files and it's way to connect to the database/// .

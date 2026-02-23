@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    scroll-behavior: smooth;
-}
 
 @layer base {
     input[type="number"]::-webkit-inner-spin-button,
@@ -16,4 +13,117 @@
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.15);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  animation: fadeUp 1s ease forwards;
+}
+
+.hero-subtitle {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #e5e5e5;
+  max-width: 520px;
+  animation: fadeUp 1.2s ease forwards;
+}
+
+.hero-primary-btn {
+  padding: 0.75rem 2rem;
+  background: white;
+  color: black;
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.hero-primary-btn:hover {
+  background: #e5e5e5;
+}
+
+.hero-secondary-btn {
+  color: white;
+  font-weight: 500;
+  border-bottom: 1px solid white;
+}
+
+.animate-heroZoom {
+  animation: heroZoom 6s ease forwards;
+}
+
+
+.pt-screen {
+  padding-top: 100vh;
+}
+
+.site-container {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .site-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-container {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+}
+
+.heading-xl {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.heading-lg {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.subtitle-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.link-action {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
 }

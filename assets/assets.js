@@ -1,6 +1,7 @@
 import logo from "./logo.jpeg";
 import search_icon from "./search_icon.svg";
 import user_icon from "./user_icon.svg";
+import user_white from "./user_white.png";
 import cart_icon from "./cart_icon.svg";
 import add_icon from "./add_icon.svg";
 import order_icon from "./order_icon.svg";
@@ -55,12 +56,14 @@ import post_banner_three from "./post_banner_three.webp"
 import basic_shirts from "./basic_shirts.webp"
 import basic_shirts_one from "./basic_shirts_one.webp"
 import size_guie_image from "./size_guide_image.webp"
-
+import hero_polo from "./hero_polo.png"
+import hero_graphic from "./hero_graphic.png"
 
 export const assets = {
   logo,
   search_icon,
   user_icon,
+  user_white,
   cart_icon,
   add_icon,
   order_icon,
@@ -115,6 +118,8 @@ export const assets = {
   basic_shirts,
   basic_shirts_one,
   size_guie_image,
+  hero_polo,
+  hero_graphic,
 };
 
 export const BagIcon = () => {

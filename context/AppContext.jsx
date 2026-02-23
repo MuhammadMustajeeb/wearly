@@ -24,6 +24,8 @@ export const AppContextProvider = ({ children }) => {
     const [userData, setUserData] = useState(false);
     const [isSeller, setIsSeller] = useState(false);
     const [cartItems, setCartItems] = useState({});
+    const [isCartOpen, setIsCartOpen] = useState(false);
+
 
     // Fetch products
     const fetchProductData = async () => {
@@ -65,29 +67,32 @@ export const AppContextProvider = ({ children }) => {
     };
 
     // Add to cart
-    const addToCart = async (productId, size, color) => {
-        if (!productId) return;
-        if (!size) { toast.error("Please select a size."); return; }
-        if (!color) { toast.error("Please select a color."); return; }
+    const addToCart = async (productId, size, color = null, productHasColor = false) => {
+  if (!productId) return;
 
-        const key = makeItemKey(productId, size, color);
-        const cartData = structuredClone(cartItems);
+  if (!size) { toast.error("Please select a size."); return; }
 
-        cartData[key] = (cartData[key] || 0) + 1;
-        setCartItems(cartData);
+  if (productHasColor && !color) { toast.error("Please select a color."); return; }
 
-        if (user) {
-            try {
-                const token = await getToken();
-                await axios.post("/api/cart/update", { cartData }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                toast.success("Item added to cart");
-            } catch (err) {
-                toast.error(err.message || "Failed to update cart");
-            }
-        }
-    };
+  const key = makeItemKey(productId, size, color);
+  const cartData = structuredClone(cartItems);
+  cartData[key] = (cartData[key] || 0) + 1;
+  setCartItems(cartData);
+
+  if (user) {
+    try {
+      const token = await getToken();
+      await axios.post("/api/cart/update", { cartData }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success("Item added to cart");
+    } catch (err) {
+      toast.error(err.message || "Failed to update cart");
+    }
+  }
+};
+
+
 
     // Update quantity
     const updateCartQuantity = async (itemKey, quantity) => {
@@ -161,7 +166,8 @@ export const AppContextProvider = ({ children }) => {
         products, fetchProductData,
         cartItems, setCartItems,
         addToCart, updateCartQuantity,
-        getCartCount, getCartAmount, getAdjustedPrice
+        getCartCount, getCartAmount, getAdjustedPrice, isCartOpen,
+  setIsCartOpen,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

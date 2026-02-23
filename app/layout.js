@@ -7,6 +7,8 @@ import Header from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Script from "next/script"; // ✅ ADD THIS
 import MaintenanceBanner from "@/components/MaintenanceBanner";
+import CartDrawer from "@/components/CartDrawer";
+
 
 const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"] });
 
@@ -59,10 +61,12 @@ export default function RootLayout({ children }) {
         <body className={`${outfit.className} antialiased text-gray-700`}>
           <Toaster />
           <AppContextProvider>
-            <MaintenanceBanner />
-            <Header />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
+            {/* <MaintenanceBanner /> */}
+            <Header className="fixed top-0 left-0 w-full z-50 bg-transparent"/>
+            <main className="relative z-0 min-h-screen flex flex-col pt-20">{children} 
+              {/* <Footer /> */}
+            </main>
+            <CartDrawer />
           </AppContextProvider>
 
           {/* ✅ noscript fallback */}

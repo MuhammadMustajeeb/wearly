@@ -166,10 +166,13 @@ const AddProduct = () => {
             <label className="text-base font-medium">Category</label>
             <select value={category} onChange={e => setCategory(e.target.value)}
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40">
-              <option value="plain">Plain</option>
-              <option value="bold">Bold</option>
-              <option value="graphic">Graphic</option>
-              <option value="offers">Offer / Combo Pack</option>
+              <option value="plain">Plain T-Shirt</option>
+  <option value="bold">Bold T-Shirt</option>
+  <option value="graphic">Graphic T-Shirt</option>
+  <option value="polos">Polos</option>
+  <option value="hoodies">Hoodies</option>
+  <option value="offers">Offer / Combo Pack</option>
+  <option value="customization">Customization</option>
             </select>
           </div>
           <div className="flex flex-col gap-1 w-32">

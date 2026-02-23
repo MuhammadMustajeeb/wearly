@@ -14,6 +14,9 @@ export default {
       gridTemplateColumns:{
         'auto': 'repeat(auto-fit, minmax(200px, 1fr))'
       },
+      spacing: {
+        'screen': '100vh', // allows mt-screen for margin-top = 100vh
+      },
     },
   },
   plugins: [],

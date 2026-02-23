@@ -1,6 +1,6 @@
 export default function ContactPage() {
   return (
-    <section className="container mx-auto py-12 px-6 max-w-3xl">
+    <section className="container mx-auto py-12 px-6 max-w-3xl flex-grow">
       <h1 className="text-4xl font-semibold text-gray-900 mb-6">Contact Us</h1>
       <p className="text-gray-600 mb-8">
         Got questions or feedback? We’d love to hear from you.  

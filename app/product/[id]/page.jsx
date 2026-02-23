@@ -49,7 +49,7 @@ const AUTO_COLOR_KEYWORDS = ["Gray"];
 
 const Product = () => {
   const { id } = useParams();
-  const { products, router, addToCart, getAdjustedPrice } = useAppContext();
+  const { products, router, addToCart, getAdjustedPrice, setIsCartOpen } = useAppContext();
 
   // product data + display
   const [productData, setProductData] = useState(null);
@@ -481,6 +481,7 @@ Please guide me about customization options.
             return toast.error("Please select a color");
           }
           addToCart(productData._id, selectedSize, selectedColor);
+          setIsCartOpen(true);
         }}
         className={`w-full py-3.5 ${
           colorOut
@@ -488,7 +489,7 @@ Please guide me about customization options.
             : "bg-gray-100 text-gray-800 hover:bg-gray-200"
         } transition`}
       >
-        {colorOut ? "Out of Stock" : "Add to Cart"}
+        {colorOut ? "Out of Stock" : "Add to Bag"}
       </button>
 
       <button
@@ -500,7 +501,7 @@ Please guide me about customization options.
             return toast.error("Please select a color");
           }
           addToCart(productData._id, selectedSize, selectedColor);
-          router.push("/cart");
+          router.push("/checkout");
         }}
         className={`w-full py-3.5 ${
           colorOut

@@ -1,29 +1,33 @@
-'use client'
+'use client';
+
 import React from "react";
 import HeaderSlider from "@/components/HeaderSlider";
-import HomeProducts from "@/components/HomeProducts";
-import Banner from "@/components/Banner";
-import NewsLetter from "@/components/NewsLetter";
-import FeaturedProduct from "@/components/FeaturedProduct";
-import MobileStickyCTA from "@/components/MobileStickCTA";
-import ExitIntentOffer from "@/components/ExitIntentOffer";
-import WhatsappButton from "@/components/WhatsappButton";
+// import HomeProducts from "@/components/HomeProducts";
+// import FeaturedCategories from "@/components/FeaturedCategories";
+// import Banner from "@/components/Banner";
+// import WhatsappButton from "@/components/WhatsappButton";
+// import Footer from "@/components/Footer";
 
 const Home = () => {
-
   return (
     <>
-      <div className="px-6 md:px-16 lg:px-32">
+      {/* FIXED HERO */}
+      <div className="fixed top-0 left-0 w-full h-screen z-10">
         <HeaderSlider />
-        <HomeProducts />
-        <FeaturedProduct />
-        <Banner />
-        {/* <NewsLetter /> */}
-        {/* <MobileStickyCTA /> */}
-        {/* <ExitIntentOffer /> */}
-        <WhatsappButton phone="923701114204" defaultMessage="Hi! I have a question about my order." />
-
       </div>
+
+      {/* MAIN CONTENT */}
+      {/* <div className="relative z-20 mt-screen px-6 md:px-16 lg:px-32 bg-white">
+        {/* mt-screen is a custom class with margin-top: 100vh */}
+        {/* <HomeProducts />
+        <FeaturedCategories />
+        <Banner />
+        <WhatsappButton
+          phone="923701114204"
+          defaultMessage="Hi! I have a question about my order."
+        /> */}
+      
+      {/* </div> */} 
     </>
   );
 };
