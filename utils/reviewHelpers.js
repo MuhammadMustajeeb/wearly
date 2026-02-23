@@ -1,7 +1,13 @@
 import User from "@/models/User";
 
-export const isAdminByClerkId = async (clerkId) => {
+export const isVerifiedBuyer = async (clerkId, productId) => {
   if (!clerkId) return false;
+
   const user = await User.findOne({ clerkId });
-  return user?.role === "admin"; // adjust according to your user model
+
+  if (!user) return false;
+
+  return user.orders?.some(order =>
+    order.items.some(item => item.product.toString() === productId)
+  );
 };
