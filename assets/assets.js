@@ -58,7 +58,7 @@ import basic_shirts_one from "./basic_shirts_one.webp"
 import size_guie_image from "./size_guide_image.webp"
 import hero_polo from "./hero_polo.png"
 import hero_graphic from "./hero_graphic.jpeg"
-import hero_plain from "./hero_plain.png"
+// import hero_plain from "./hero_plain.png"
 import hero_customization from "./hero_customization.png"
 
 export const assets = {
@@ -122,7 +122,7 @@ export const assets = {
   size_guie_image,
   hero_polo,
   hero_graphic,
-  hero_plain,
+  // hero_plain,
   hero_customization
 };
 
