@@ -11,3 +11,13 @@ export const isVerifiedBuyer = async (clerkId, productId) => {
     order.items.some(item => item.product.toString() === productId)
   );
 };
+
+export const isAdminByClerkId = async (clerkId) => {
+  if (!clerkId) return false;
+
+  const user = await User.findOne({ clerkId });
+
+  if (!user) return false;
+
+  return user.role === 'admin';
+};
