@@ -285,113 +285,129 @@ Please guide me about customization options.
 
 
   return (
-    <>
-      <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {/* Left: Image Gallery */}
-          <div className="px-5 lg:px-16 xl:px-20">
-            <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4 transition-all duration-300 ease-in-out">
-              <Image
-                src={
-                  hoverImage ||
-                  mainImage ||
-                  productData.image[0] ||
-                  assets.box_icon
-                }
-                alt={productData.name || "product image"}
-                className="w-full h-auto object-cover mix-blend-multiply transition-all duration-300 ease-in-out"
-                width={1280}
-                height={720}
-              />
+    <div className="min-h-screen bg-white">
+      <div className="site-container py-8 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          
+          {/* Left: Large Product Image with Thumbnails */}
+          <div className="space-y-6">
+            {/* Main Product Image */}
+            <div className="relative overflow-hidden rounded-lg bg-gray-50">
+              <div className="aspect-square">
+                <Image
+                  src={
+                    hoverImage ||
+                    mainImage ||
+                    productData.image[0] ||
+                    assets.box_icon
+                  }
+                  alt={productData.name || "product image"}
+                  className="w-full h-full object-cover transition-all duration-500 ease-out"
+                  width={800}
+                  height={800}
+                  priority
+                />
+              </div>
+              
+              {/* Badge for Sale */}
+              {adjustedPrice < adjustedBasePrice && (
+                <div className="absolute top-6 left-6 bg-red-500 text-white px-4 py-2 text-xs font-bold tracking-widest uppercase">
+                  Sale
+                </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
+            {/* Thumbnail Strip */}
+            <div className="grid grid-cols-4 gap-3">
               {thumbnailsForCurrentColor().map((image, index) => (
                 <div
                   key={index}
-                  onMouseEnter={() => setHoverImage(image)} // 👈 preview on hover
-                  onMouseLeave={() => setHoverImage(null)} // revert
-                  onClick={() => setMainImage(image)} // permanently select
-                  className="cursor-pointer rounded-lg overflow-hidden bg-gray-500/10 hover:opacity-80 transition"
+                  onMouseEnter={() => setHoverImage(image)}
+                  onMouseLeave={() => setHoverImage(null)}
+                  onClick={() => setMainImage(image)}
+                  className={`aspect-square rounded-lg overflow-hidden bg-gray-100 cursor-pointer transition-all duration-300 ${
+                    mainImage === image ? 'ring-2 ring-red-500 ring-offset-2' : 'hover:opacity-80'
+                  }`}
                 >
                   <Image
                     src={image}
                     alt={`${productData.name} thumbnail ${index + 1}`}
-                    className="w-full h-auto object-cover mix-blend-multiply"
-                    width={1280}
-                    height={720}
+                    className="w-full h-full object-cover"
+                    width={200}
+                    height={200}
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right: Product Info */}
-          <div className="flex flex-col">
-            <h1 className="text-3xl font-medium text-gray-800/90 mb-4">
-              {productData.name}
-            </h1>
-
-            <div className="flex items-center gap-2">
-              {[...Array(4)].map((_, i) => (
+          {/* Right: Product Details */}
+          <div className="space-y-8">
+            {/* Product Name */}
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-black text-black leading-tight uppercase tracking-tight">
+                {productData.name}
+              </h1>
+              
+              {/* Rating */}
+              <div className="flex items-center gap-2 mt-4">
+                {[...Array(4)].map((_, i) => (
+                  <Image
+                    key={i}
+                    className="h-5 w-5"
+                    src={assets.star_icon}
+                    alt="star_icon"
+                  />
+                ))}
                 <Image
-                  key={i}
-                  className="h-4 w-4"
-                  src={assets.star_icon}
-                  alt="star_icon"
+                  className="h-5 w-5"
+                  src={assets.star_dull_icon}
+                  alt="star_dull_icon"
                 />
-              ))}
-              <Image
-                className="h-4 w-4"
-                src={assets.star_dull_icon}
-                alt="star_dull_icon"
-              />
-              <p>(4.5)</p>
+                <span className="text-sm text-gray-600 ml-1">(4.5)</span>
+              </div>
             </div>
 
-            <p className="text-gray-600 mt-3">{productData.description}</p>
+            {/* Price */}
+            <div className="space-y-2">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl lg:text-4xl font-black text-black">
+                  ${adjustedPrice}
+                </span>
+                {adjustedPrice < adjustedBasePrice && (
+                  <span className="text-lg text-gray-500 line-through">
+                    ${adjustedBasePrice}
+                  </span>
+                )}
+              </div>
+            </div>
 
-            <p className="text-3xl font-medium mt-6">
-              Rs.{adjustedPrice}
-              <span className="text-base font-normal text-gray-800/60 line-through ml-2">
-                Rs.{adjustedBasePrice}
-              </span>
+            {/* Description */}
+            <p className="text-gray-600 text-lg leading-relaxed">
+              {productData.description}
             </p>
 
-            <hr className="bg-gray-600 my-6" />
-
-            <div className="overflow-x-auto">
-              <table className="table-auto border-collapse w-full max-w-72">
-                <tbody>
-                  <tr>
-                    <td className="text-gray-600 font-medium">Category</td>
-                    <td className="text-gray-800/50">{productData.category}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Size selector */}
-            <div className="mt-6">
+            {/* Size Selector */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">Size</p>
+                <label className="text-sm font-bold tracking-widest uppercase text-black">Size</label>
                 <button
                   onClick={() => setShowSizeGuide(true)}
-                  className="text-sm text-gray-500"
+                  className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors"
                 >
                   Size Guide
                 </button>
               </div>
 
-              <div className="flex gap-3 mt-3">
+              <div className="flex gap-3">
                 {(productData.availableSizes || ["M", "L"]).map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-3 py-1.5 rounded-md border ${
+                    className={`w-14 h-14 rounded-lg border-2 font-bold text-sm transition-all duration-300 ${
                       selectedSize === size
-                        ? "bg-gray-800 text-white"
-                        : "bg-white text-gray-700"
+                        ? "border-black bg-black text-white"
+                        : "border-gray-300 bg-white text-black hover:border-gray-400"
                     }`}
                   >
                     {size}
@@ -400,17 +416,14 @@ Please guide me about customization options.
               </div>
             </div>
 
-            {/* Color selector */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">Color</p>
-              </div>
+            {/* Color Selector */}
+            <div className="space-y-4">
+              <label className="text-sm font-bold tracking-widest uppercase text-black">Color</label>
 
-              <div className="flex gap-3 mt-3 items-center">
+              <div className="flex gap-3 items-center">
                 {(productData.availableColors || ["#000000", "#ffffff"]).map(
                   (color) => {
                     const valid = isValidCssColor(color);
-                    // For display/title we prefer the mapped name (if available)
                     const displayName = getColorName(color) || color;
                     const thisColorOut = isColorOutOfStock(productData, color);
 
@@ -419,9 +432,9 @@ Please guide me about customization options.
                         key={color}
                         onClick={() => !thisColorOut && setSelectedColor(color)}
                         disabled={thisColorOut}
-                        className={`w-10 h-10 rounded-full border flex items-center justify-center ${
-                          selectedColor === color ? "ring-2 ring-offset-2" : ""
-                        } ${thisColorOut ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}
+                        className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                          selectedColor === color ? "border-black ring-2 ring-red-500 ring-offset-2" : "border-gray-300"
+                        } ${thisColorOut ? "opacity-40 cursor-not-allowed" : "cursor-pointer hover:border-gray-400"}`}
                         title={thisColorOut ? `${displayName} is Out of Stock` : displayName}
                         aria-label={`Select color ${displayName}`}
                         style={
@@ -431,7 +444,7 @@ Please guide me about customization options.
                         }
                       >
                         {!valid && (
-                          <span className="text-xs text-gray-700">
+                          <span className="text-xs text-gray-700 font-bold">
                             {String(color).charAt(0).toUpperCase()}
                           </span>
                         )}
@@ -441,121 +454,158 @@ Please guide me about customization options.
                 )}
               </div>
 
-              <div className="mt-2 text-sm text-gray-600">
-                Selected:{" "}
-                <span className="font-medium">
+              <div className="text-sm text-gray-600 mt-2">
+                Selected: <span className="font-medium text-black">
                   {selectedColor
                     ? getColorName(selectedColor) || selectedColor
                     : "—"}
                 </span>
               </div>
 
-              {/* show out-of-stock when selected or detected */}
+              {/* Out of Stock Message */}
               {selectedColor && isColorOutOfStock(productData, selectedColor) && (
-                <p className="text-red-500 text-sm mt-2">This color is Out of Stock</p>
-              )}
-
-              {/* if product has no colors but an auto-detected color exists and is out of stock */}
-              {!productData.availableColors?.length && detectColorFromName(productData) && isColorOutOfStock(productData, detectColorFromName(productData)) && (
-                <p className="text-red-500 text-sm mt-2">This product (detected color: {detectColorFromName(productData)}) is Out of Stock</p>
+                <p className="text-red-500 text-sm font-medium">This color is Out of Stock</p>
               )}
             </div>
 
-            {/* Cart / Customization buttons */}
-<div className="flex items-center mt-10 gap-4">
-  {productData.isCustomizable ? (
-    <button
-      onClick={openWhatsApp}
-      className="w-full py-3.5 bg-green-600 text-white hover:bg-green-700 transition rounded"
-    >
-      Customize on WhatsApp
-    </button>
-  ) : (
-    <>
-      <button
-        disabled={colorOut}
-        onClick={() => {
-          if (colorOut) return toast.error("This color is Out of Stock!");
-          if (!selectedSize) return toast.error("Please select a size");
-          if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
-            return toast.error("Please select a color");
-          }
-          addToCart(productData._id, selectedSize, selectedColor);
-          setIsCartOpen(true);
-        }}
-        className={`w-full py-3.5 ${
-          colorOut
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-        } transition`}
-      >
-        {colorOut ? "Out of Stock" : "Add to Bag"}
-      </button>
+            {/* Add to Cart Button */}
+            <div className="space-y-4">
+              {productData.isCustomizable ? (
+                <button
+                  onClick={openWhatsApp}
+                  className="w-full py-4 bg-green-600 text-white hover:bg-green-700 transition-all duration-300 font-bold tracking-widest uppercase rounded-lg"
+                >
+                  Customize on WhatsApp
+                </button>
+              ) : (
+                <button
+                  disabled={colorOut}
+                  onClick={() => {
+                    if (colorOut) return toast.error("This color is Out of Stock!");
+                    if (!selectedSize) return toast.error("Please select a size");
+                    if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
+                      return toast.error("Please select a color");
+                    }
+                    addToCart(productData._id, selectedSize, selectedColor);
+                    setIsCartOpen(true);
+                  }}
+                  className={`w-full py-4 font-bold tracking-widest uppercase transition-all duration-300 rounded-lg ${
+                    colorOut
+                      ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                      : "bg-black text-white hover:bg-red-500 transform hover:scale-105"
+                  }`}
+                >
+                  {colorOut ? "Out of Stock" : "Add to Cart"}
+                </button>
+              )}
+            </div>
 
-      <button
-        disabled={colorOut}
-        onClick={() => {
-          if (colorOut) return toast.error("This color is Out of Stock!");
-          if (!selectedSize) return toast.error("Please select a size");
-          if ((productData.availableColors?.length ?? 0) > 0 && !selectedColor) {
-            return toast.error("Please select a color");
-          }
-          addToCart(productData._id, selectedSize, selectedColor);
-          router.push("/checkout");
-        }}
-        className={`w-full py-3.5 ${
-          colorOut
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-[#d6c4b6] text-gray-800 hover:bg-[#e2d3c7]"
-        } transition`}
-      >
-        {colorOut ? "Out of Stock" : "Buy now"}
-      </button>
-    </>
-  )}
-</div>
-
+            {/* Trust Badges */}
+            <div className="space-y-3 pt-6 border-t border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-black">Free Shipping on Orders Over $100</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-black">Easy Returns Within 30 Days</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-black">100% Authentic Products</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Featured Products */}
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center mb-4 mt-16">
-            <p className="text-3xl font-medium">
-              Featured <span className="text-[#d6c4b6]">Products</span>
-            </p>
-            <div className="w-28 h-0.5 bg-[#d6c4b6] mt-2"></div>
+        {/* Product Details Section */}
+        <div className="mt-20 pt-12 border-t border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-xl font-black text-black mb-6 uppercase tracking-tight">Product Details</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between py-3 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Category</span>
+                  <span className="text-sm font-bold text-black uppercase">{productData.category}</span>
+                </div>
+                <div className="flex justify-between py-3 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Material</span>
+                  <span className="text-sm font-bold text-black">100% Premium Cotton</span>
+                </div>
+                <div className="flex justify-between py-3 border-b border-gray-100">
+                  <span className="text-sm font-medium text-gray-600">Fit</span>
+                  <span className="text-sm font-bold text-black">Regular Fit</span>
+                </div>
+                <div className="flex justify-between py-3">
+                  <span className="text-sm font-medium text-gray-600">Care</span>
+                  <span className="text-sm font-bold text-black">Machine Washable</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-black text-black mb-6 uppercase tracking-tight">Size Guide</h3>
+              <div className="bg-gray-50 rounded-lg p-6">
+                <button
+                  onClick={() => setShowSizeGuide(true)}
+                  className="w-full py-3 bg-black text-white hover:bg-red-500 transition-all duration-300 font-bold tracking-widest uppercase rounded-lg"
+                >
+                  View Size Chart
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Products Section */}
+        <div className="mt-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-black text-black mb-4 uppercase tracking-tight">
+              You May Also Like
+            </h2>
+            <div className="w-24 h-1 bg-red-500 mx-auto" />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6 pb-14 w-full">
-            {products.slice(0, 5).map((product, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {products.slice(0, 4).map((product, index) => (
               <ProductCard key={index} product={product} />
             ))}
           </div>
-
-          <button className="px-8 py-2 mb-16 border rounded text-gray-500/70 hover:bg-slate-50/90 transition">
-            See more
-          </button>
         </div>
       </div>
 
       {/* Size Guide Modal */}
       {showSizeGuide && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white max-w-lg w-full p-4 rounded-lg relative">
+          <div className="bg-white max-w-4xl w-full p-8 rounded-lg relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowSizeGuide(false)}
-              className="absolute top-3 right-3 text-gray-600"
+              className="absolute top-6 right-6 text-gray-600 hover:text-black transition-colors"
             >
-              Close
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
-            <div className="pt-6">
+            <div className="text-center">
+              <h3 className="text-2xl font-black text-black mb-6 uppercase tracking-tight">Size Guide</h3>
               <Image
                 src={assets.size_guie_image}
                 alt="Size Guide"
                 width={800}
                 height={400}
-                className="w-full h-auto"
+                className="w-full h-auto rounded-lg"
               />
             </div>
           </div>
@@ -565,28 +615,29 @@ Please guide me about customization options.
       {/* Color Guide Modal */}
       {showColorGuide && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white max-w-md w-full p-4 rounded-lg relative">
+          <div className="bg-white max-w-md w-full p-8 rounded-lg relative">
             <button
               onClick={() => setShowColorGuide(false)}
-              className="absolute top-3 right-3 text-gray-600"
+              className="absolute top-6 right-6 text-gray-600 hover:text-black transition-colors"
             >
-              Close
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
-            <div className="pt-6">
-              <p className="text-lg font-medium">Color Guide</p>
-              <p className="text-sm text-gray-600 mt-3">
-                Colors may vary slightly based on your screen. For accuracy,
-                refer to the color name or hex in product details.
+            <div>
+              <h3 className="text-xl font-black text-black mb-4 uppercase tracking-tight">Color Guide</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Colors may vary slightly based on your screen. For accuracy, refer to color name or hex in product details.
               </p>
             </div>
           </div>
         </div>
       )}
 
-      <div className="mt-20 px-6 md:px-16 lg:px-32">
+      <div className="mt-20">
         <ProductReviews productId={id} />
       </div>
-    </>
+    </div>
   );
 };
 

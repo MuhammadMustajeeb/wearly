@@ -1,4 +1,4 @@
-import { Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppContextProvider } from "../context/AppContext";
 import { Toaster } from "react-hot-toast";
@@ -10,7 +10,7 @@ import MaintenanceBanner from "@/components/MaintenanceBanner";
 import CartDrawer from "@/components/CartDrawer";
 
 
-const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"] });
+const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800", "900"] });
 
 export const metadata = {
   title: "Flexters",
@@ -58,7 +58,7 @@ export default function RootLayout({ children }) {
   <meta name="theme-color" content="#ffffff" />
         </head>
 
-        <body className={`${outfit.className} antialiased text-gray-700`}>
+        <body className={`${inter.className} antialiased text-black bg-white`}>
           <Toaster />
           <AppContextProvider>
             {/* <MaintenanceBanner /> */}

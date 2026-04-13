@@ -22,35 +22,51 @@ const CheckoutContact = ({ email, setEmail }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-4 relative">
-  <h2 className="text-xl font-semibold">Contact</h2>
+    <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 space-y-6 relative">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-black text-black uppercase tracking-tight">Contact Information</h2>
+        {!user && (
+          <button
+            onClick={handleSignIn}
+            className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors"
+          >
+            Sign In
+          </button>
+        )}
+      </div>
 
-  {!user && (
-    <button
-      onClick={handleSignIn}
-      className="absolute top-6 right-6 text-sm text-blue-600 hover:underline"
-    >
-      Log in
-    </button>
-  )}
+      {/* Email Field */}
+      <div className="space-y-2">
+        <label htmlFor="email" className="text-sm font-bold text-black uppercase tracking-wide">
+          Email Address
+        </label>
+        <div className="relative">
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email address"
+            value={user?.email || localEmail}
+            onChange={handleEmailChange}
+            readOnly={!!user?.email}
+            className={`w-full px-4 py-3 bg-transparent border-b-2 border-gray-300 focus:border-black outline-none transition-colors duration-300 placeholder-gray-400 ${
+              user?.email ? "text-gray-500 cursor-not-allowed" : "text-black"
+            }`}
+          />
+        </div>
+        {!user?.email && (
+          <p className="text-xs text-gray-500">We'll use this to send you order updates</p>
+        )}
+      </div>
 
-  <input
-    type="email"
-    placeholder="Email address"
-    value={user?.email || localEmail}
-    onChange={handleEmailChange}
-    readOnly={!!user?.email}
-    className={`w-full p-4 border rounded-lg focus:ring-2 focus:ring-black outline-none ${
-      user?.email ? "bg-gray-100" : ""
-    }`}
-  />
-
-  <label className="flex items-center gap-2 text-sm text-gray-600">
-    <input type="checkbox" className="accent-black" />
-    Email me with news and offers
-  </label>
-</div>
-
+      {/* Marketing Checkbox */}
+      <label className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-black transition-colors">
+        <input 
+          type="checkbox" 
+          className="w-4 h-4 border-2 border-gray-300 rounded focus:ring-2 focus:ring-black focus:border-black transition-colors"
+        />
+        <span>Email me with news and offers</span>
+      </label>
+    </div>
   );
 };
 

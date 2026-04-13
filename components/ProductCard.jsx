@@ -38,64 +38,65 @@ const ProductCard = ({ product, showAddToCart = true }) => {
       onClick={() => router.push("/product/" + product._id)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative cursor-pointer flex flex-col mt-6"
+      className="group cursor-pointer"
     >
-      {/* Product Image */}
-      <div className="relative w-full h-[550px] bg-gray-100 overflow-hidden">
-        <Image
-          src={product.image?.[0]}
-          alt={product.name}
-          fill
-          className="object-cover transition-transform duration-500"
-          sizes="(max-width: 768px) 50vw, 25vw"
-        />
+      {/* Product Image Container */}
+      <div className="relative overflow-hidden bg-gray-50">
+        <div className="aspect-square">
+          <Image
+            src={product.image?.[0]}
+            alt={product.name}
+            fill
+            className={`object-cover transition-transform duration-700 ease-out ${
+              hovered ? 'scale-110' : 'scale-100'
+            }`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        </div>
 
-        {/* Add to Cart Bar on Hover */}
-        {showAddToCart && hovered && (
-          <div className="absolute bottom-0 left-0 w-full bg-black/90 text-white px-4 py-3 flex items-center gap-3 justify-between transition-all">
-            
-            {/* Size Selector */}
-            {product.availableSizes?.length > 0 && (
-              <select
-                value={selectedSize}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) => setSelectedSize(e.target.value)}
-                className="bg-white text-black px-2 py-1 rounded text-sm"
+        {/* Quick Add Overlay - Appears on Hover */}
+        {showAddToCart && (
+          <div className={`absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity duration-300 ${
+            hovered ? 'opacity-100' : 'opacity-0'
+          }`}>
+            <div className="bg-white text-black px-6 py-3 flex items-center gap-3">
+              {/* Quick Add Button */}
+              <button
+                onClick={handleAddToCart}
+                className="flex items-center gap-2 text-sm font-bold tracking-wide uppercase hover:text-red-500 transition-colors"
               >
-                {product.availableSizes.map((size) => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
-            )}
+                <BagIcon className="w-4 h-4" /> Quick Add
+              </button>
+            </div>
+          </div>
+        )}
 
-            {/* Color Selector */}
-            {product.availableColors?.length > 0 && (
-              <select
-                value={selectedColor || ""}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) => setSelectedColor(e.target.value)}
-                className="bg-white text-black px-2 py-1 rounded text-sm"
-              >
-                {product.availableColors.map((color) => (
-                  <option key={color} value={color}>{color}</option>
-                ))}
-              </select>
-            )}
-
-            <button
-              onClick={handleAddToCart}
-              className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded text-sm font-medium hover:opacity-90 transition"
-            >
-              <BagIcon className="w-4 h-4" /> Add
-            </button>
+        {/* Badge for New/Sale */}
+        {product.offerPrice < product.price && (
+          <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 text-xs font-bold tracking-widest uppercase">
+            Sale
           </div>
         )}
       </div>
 
-      {/* Name & Price */}
-      <div className="mt-4 flex flex-col gap-0.5">
-        <p className="text-base font-medium text-gray-800 truncate">{product.name}</p>
-        <p className="text-lg font-semibold text-gray-900">{currency}{product.offerPrice}</p>
+      {/* Product Info */}
+      <div className="mt-6 space-y-2">
+        {/* Product Name */}
+        <h3 className="text-lg font-bold text-black group-hover:text-red-500 transition-colors duration-300 leading-tight">
+          {product.name}
+        </h3>
+        
+        {/* Price */}
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-black text-black">
+            {currency}{product.offerPrice}
+          </span>
+          {product.offerPrice < product.price && (
+            <span className="text-sm text-gray-500 line-through">
+              {currency}{product.price}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-black: #0a0a0a;
+  --pure-white: #ffffff;
+  --accent-red: #e63946;
+  --accent-blue: #0077ff;
+  --gray-light: #f5f5f5;
+  --gray-medium: #999999;
+  --gray-dark: #333333;
+}
 
 @layer base {
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+  body {
+    @apply bg-white text-black;
+    font-family: 'Inter', sans-serif;
   }
 
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 ::-webkit-scrollbar {
-  display: none;
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-medium);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-dark);
 }
 
 @keyframes fadeUp {
@@ -35,55 +64,119 @@
   }
 }
 
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes underlineSlide {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
 .hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 600;
-  line-height: 1.1;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
   animation: fadeUp 1s ease forwards;
+  text-transform: uppercase;
 }
 
 .hero-subtitle {
-  margin-top: 1rem;
-  font-size: 1.1rem;
-  color: #e5e5e5;
+  margin-top: 1.5rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--gray-medium);
   max-width: 520px;
   animation: fadeUp 1.2s ease forwards;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 .hero-primary-btn {
-  padding: 0.75rem 2rem;
-  background: white;
-  color: black;
-  border-radius: 9999px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  padding: 1rem 3rem;
+  background: var(--primary-black);
+  color: var(--pure-white);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-primary-btn:hover {
-  background: #e5e5e5;
+  background: var(--accent-red);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+}
+
+.hero-primary-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.hero-primary-btn:hover::before {
+  left: 100%;
 }
 
 .hero-secondary-btn {
-  color: white;
-  font-weight: 500;
-  border-bottom: 1px solid white;
+  color: var(--pure-white);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.hero-secondary-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-red);
+  transition: width 0.3s ease;
+}
+
+.hero-secondary-btn:hover::after {
+  width: 100%;
 }
 
 .animate-heroZoom {
-  animation: heroZoom 6s ease forwards;
+  animation: heroZoom 8s ease-in-out forwards;
 }
-
 
 .pt-screen {
   padding-top: 100vh;
 }
 
 .site-container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 @media (min-width: 768px) {
@@ -102,28 +195,132 @@
 
 .heading-xl {
   font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
 .heading-lg {
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 600;
-  line-height: 1.1;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.heading-md {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 .subtitle-label {
   font-size: 0.75rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  opacity: 0.6;
+  color: var(--gray-medium);
+  font-weight: 600;
 }
 
 .link-action {
   font-size: 0.75rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 2px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.link-action::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-red);
+  transition: width 0.3s ease;
+}
+
+.link-action:hover::after {
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--primary-black);
+  color: var(--pure-white);
+  padding: 1rem 2.5rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background: var(--accent-red);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-black);
+  border: 2px solid var(--primary-black);
+  padding: 0.875rem 2.25rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-black);
+  color: var(--pure-white);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(10, 10, 10, 0.3);
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(10, 10, 10, 0.15);
+}
+
+.image-zoom {
+  overflow: hidden;
+}
+
+.image-zoom img {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-zoom:hover img {
+  transform: scale(1.1);
+}
+
+.section-padding {
+  padding: 6rem 0;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 8rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 10rem 0;
+  }
 }
