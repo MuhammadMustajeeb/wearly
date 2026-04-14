@@ -29,9 +29,9 @@ const Checkout = () => {
 
   const getCartAmount = () => {
     let total = 0;
-    Object.keys(cartItems).forEach((key) => {
+    Object.keys(cartItems || {}).forEach((key) => {
       const [productId, size, color] = key.split(":");
-      const qty = cartItems[key];
+      const qty = (cartItems || {})[key];
       const product = products.find((p) => p._id === productId);
       if (!product || qty <= 0) return;
       total += getAdjustedPrice(product, size, color) * qty;
@@ -50,14 +50,14 @@ const Checkout = () => {
 }
 
       if (!selectedAddress) return toast.error("Please select shipping address");
-      if (Object.keys(cartItems).length === 0) return toast.error("Cart is empty");
+      if (Object.keys(cartItems || {}).length === 0) return toast.error("Cart is empty");
 
       setLoading(true);
 
-      const items = Object.keys(cartItems)
+      const items = Object.keys(cartItems || {})
         .map((key) => {
           const [productId, size, color] = key.split(":");
-          const qty = cartItems[key];
+          const qty = (cartItems || {})[key];
           const product = products.find((p) => p._id === productId);
           if (!product || qty <= 0) return null;
 
