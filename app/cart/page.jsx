@@ -18,6 +18,24 @@ const colorMap = {
 const Cart = () => {
   const { products, router, cartItems, updateCartQuantity, getCartCount, getAdjustedPrice } = useAppContext();
 
+  // Return empty cart message if cartItems is undefined or null
+  if (!cartItems || typeof cartItems !== 'object') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 pt-14">
+        <h1 className="text-2xl md:text-3xl text-gray-500 mb-4">
+          Your <span className="font-medium text-[#d6c4b6]">Cart</span>
+        </h1>
+        <p className="text-lg text-gray-600 mb-8">Your cart is empty</p>
+        <button
+          onClick={() => router.push('/all-products')}
+          className="bg-black text-white px-8 py-3 text-sm font-bold tracking-widest uppercase hover:bg-red-500 transition-colors duration-300"
+        >
+          Continue Shopping
+        </button>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex flex-col md:flex-row gap-10 px-6 md:px-16 lg:px-32 pt-14 mb-20">
