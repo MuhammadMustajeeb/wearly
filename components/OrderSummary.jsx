@@ -23,9 +23,9 @@ const OrderSummary = ({
 
       {/* Products */}
       <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
-        {Object.keys(cartItems).map((key) => {
+        {Object.keys(cartItems || {}).map((key) => {
           const [productId, size, color] = key.split(":");
-          const qty = cartItems[key];
+          const qty = (cartItems || {})[key];
           const product = products.find((p) => p._id === productId);
           if (!product || qty <= 0) return null;
 

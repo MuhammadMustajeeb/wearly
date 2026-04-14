@@ -13,10 +13,10 @@ const CartItemsDrawer = () => {
 
   return (
     <div className="space-y-6">
-      {Object.keys(cartItems).map((itemKey) => {
+      {Object.keys(cartItems || {}).map((itemKey) => {
         const [productId, size, color] = itemKey.split(":");
         const product = products.find((p) => p._id === productId);
-        const qty = cartItems[itemKey];
+        const qty = (cartItems || {})[itemKey];
 
         if (!product || qty <= 0) return null;
 
