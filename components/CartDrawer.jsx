@@ -50,7 +50,7 @@ const CartDrawer = () => {
         <div className="flex flex-col h-full">
           {/* Cart Items */}
           <div className="flex-1 overflow-y-auto px-6 py-6">
-            {Object.keys(cartItems).length === 0 ? (
+            {Object.keys(cartItems || {}).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 {/* Empty Cart Icon */}
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
@@ -76,7 +76,7 @@ const CartDrawer = () => {
           </div>
 
           {/* Footer - Only show when cart has items */}
-          {Object.keys(cartItems).length > 0 && (
+          {Object.keys(cartItems || {}).length > 0 && (
             <div className="border-t border-gray-200 px-6 py-6 bg-white">
               {/* Subtotal */}
               <div className="flex justify-between items-center mb-6">

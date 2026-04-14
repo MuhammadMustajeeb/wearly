@@ -23,7 +23,7 @@ export const AppContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [userData, setUserData] = useState(false);
     const [isSeller, setIsSeller] = useState(false);
-    const [cartItems, setCartItems] = useState({});
+    const [cartItems, setCartItems] = useState(null);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
 
@@ -75,7 +75,7 @@ export const AppContextProvider = ({ children }) => {
   if (productHasColor && !color) { toast.error("Please select a color."); return; }
 
   const key = makeItemKey(productId, size, color);
-  const cartData = structuredClone(cartItems);
+  const cartData = structuredClone(cartItems || {});
   cartData[key] = (cartData[key] || 0) + 1;
   setCartItems(cartData);
 
@@ -96,8 +96,7 @@ export const AppContextProvider = ({ children }) => {
 
     // Update quantity
     const updateCartQuantity = async (itemKey, quantity) => {
-        const cartData = structuredClone(cartItems);
-
+        const cartData = structuredClone(cartItems || {});
         if (quantity === 0) delete cartData[itemKey];
         else cartData[itemKey] = quantity;
 
@@ -118,21 +117,21 @@ export const AppContextProvider = ({ children }) => {
 
     // Get total cart count
     const getCartCount = () => {
-        return Object.values(cartItems).reduce((sum, qty) => sum + (qty > 0 ? qty : 0), 0);
+        return Object.values(cartItems || {}).reduce((sum, qty) => sum + (qty > 0 ? qty : 0), 0);
     };
 
     // Get total cart amount
     const getCartAmount = () => {
         let totalAmount = 0;
-        for (const itemKey in cartItems) {
+        const safeCartItems = cartItems || {};
+        for (const itemKey in safeCartItems) {
   const [productId, size, color] = itemKey.split(":");
-  const qty = cartItems[itemKey];
+  const qty = safeCartItems[itemKey];
   const itemInfo = products.find(p => p._id === productId);
   if (itemInfo && qty > 0) {
     totalAmount += getAdjustedPrice(itemInfo, size, color) * qty;
   }
 }
-
         return Math.floor(totalAmount * 100) / 100;
     };
 
