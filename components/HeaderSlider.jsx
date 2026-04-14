@@ -7,7 +7,7 @@ import { assets } from "@/assets/assets";
 
 const categorySlides = [
   { 
-    slug: "plain", 
+    slug: "polos", 
     image: assets.hero_plain,
     title: "ESSENTIALS",
     subtitle: "Premium basics redefined",

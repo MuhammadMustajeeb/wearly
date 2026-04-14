@@ -67,7 +67,7 @@ const Cart = () => {
               </thead>
 
               <tbody>
-                {Object.keys(cartItems).map((itemKey) => {
+                {Object.keys(cartItems || {}).map((itemKey) => {
                   // itemKey format: productId:size:color
                   const [productId, size, color] = itemKey.split(":");
                   const product = products.find((p) => p._id === productId);
