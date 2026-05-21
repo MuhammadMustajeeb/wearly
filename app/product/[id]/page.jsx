@@ -372,11 +372,11 @@ Please guide me about customization options.
             <div className="space-y-2">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl lg:text-4xl font-black text-black">
-                  ${adjustedPrice}
+                  {currency}{adjustedPrice}
                 </span>
                 {adjustedPrice < adjustedBasePrice && (
                   <span className="text-lg text-gray-500 line-through">
-                    ${adjustedBasePrice}
+                    {currency}{adjustedBasePrice}
                   </span>
                 )}
               </div>
@@ -508,7 +508,7 @@ Please guide me about customization options.
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <span className="text-sm font-medium text-black">Free Shipping on Orders Over $100</span>
+                <span className="text-sm font-medium text-black">Free Shipping on Orders Over {currency}100</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">

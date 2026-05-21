@@ -8,45 +8,16 @@ const AllProducts = () => {
     
     // Filter states
     const [sortBy, setSortBy] = useState('featured');
-    const [selectedCategory, setSelectedCategory] = useState('all');
-    const [selectedSizes, setSelectedSizes] = useState([]);
-    const [selectedColors, setSelectedColors] = useState([]);
-    const [priceRange, setPriceRange] = useState([0, 500]);
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [expandedSections, setExpandedSections] = useState({
-        category: true,
-        size: true,
-        price: true,
-        color: true
-    });
 
     // Available options
-    const categories = ['all', 'plain', 'graphic', 'polo', 'hoodies'];
-    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-    const colors = [
-        { name: 'Black', value: '#000000' },
-        { name: 'White', value: '#ffffff' },
-        { name: 'Red', value: '#e63946' },
-        { name: 'Blue', value: '#0077ff' },
-        { name: 'Gray', value: '#6c757d' },
-        { name: 'Green', value: '#28a745' },
-        { name: 'Pink', value: '#e83e8c' },
-        { name: 'Yellow', value: '#ffc107' }
-    ];
+    const categories = ['plain', 'graphic', 'polo', 'hoodies'];
 
-    // Filter and sort logic (keeping existing logic intact)
+    // Filter and sort logic
     const filteredProducts = products.filter(product => {
-        // Category filter
-        if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-        
-        // Size filter
-        if (selectedSizes.length > 0 && !selectedSizes.some(size => product.availableSizes?.includes(size))) return false;
-        
-        // Color filter
-        if (selectedColors.length > 0 && !selectedColors.some(color => product.availableColors?.includes(color))) return false;
-        
-        // Price filter
-        if (product.offerPrice < priceRange[0] || product.offerPrice > priceRange[1]) return false;
+        // Category filter - if no categories selected, show all
+        if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) return false;
         
         return true;
     });
@@ -65,37 +36,19 @@ const AllProducts = () => {
     });
 
     // Toggle functions
-    const toggleSize = (size) => {
-        setSelectedSizes(prev => 
-            prev.includes(size) 
-                ? prev.filter(s => s !== size)
-                : [...prev, size]
+    const toggleCategory = (category) => {
+        setSelectedCategories(prev => 
+            prev.includes(category) 
+                ? prev.filter(c => c !== category)
+                : [...prev, category]
         );
-    };
-
-    const toggleColor = (color) => {
-        setSelectedColors(prev => 
-            prev.includes(color) 
-                ? prev.filter(c => c !== color)
-                : [...prev, color]
-        );
-    };
-
-    const toggleSection = (section) => {
-        setExpandedSections(prev => ({
-            ...prev,
-            [section]: !prev[section]
-        }));
     };
 
     const clearFilters = () => {
-        setSelectedCategory('all');
-        setSelectedSizes([]);
-        setSelectedColors([]);
-        setPriceRange([0, 500]);
+        setSelectedCategories([]);
     };
 
-    const hasActiveFilters = selectedCategory !== 'all' || selectedSizes.length > 0 || selectedColors.length > 0 || priceRange[0] > 0 || priceRange[1] < 500;
+    const hasActiveFilters = selectedCategories.length > 0;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -164,161 +117,29 @@ const AllProducts = () => {
 
                         {/* Category Filter */}
                         <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleSection('category')}
-                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide">Category</h3>
-                                <svg 
-                                    className={`w-4 h-4 text-gray-400 transition-transform ${expandedSections.category ? 'rotate-180' : ''}`}
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            {expandedSections.category && (
-                                <div className="px-6 pb-4 space-y-2">
+                            <div className="px-6 py-4">
+                                <h3 className="text-sm font-bold text-black uppercase tracking-wide mb-4">Category</h3>
+                                <div className="space-y-2">
                                     {categories.map(category => (
                                         <label key={category} className="flex items-center gap-3 cursor-pointer">
                                             <input
-                                                type="radio"
-                                                name="category"
+                                                type="checkbox"
                                                 value={category}
-                                                checked={selectedCategory === category}
-                                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                                checked={selectedCategories.includes(category)}
+                                                onChange={() => toggleCategory(category)}
                                                 className="w-4 h-4 border-2 border-gray-300 text-red-500 focus:ring-red-500"
                                             />
                                             <span className="text-sm text-gray-700 capitalize">
-                                                {category === 'all' ? 'All Categories' : category}
+                                                {category}
                                             </span>
                                         </label>
                                     ))}
                                 </div>
-                            )}
+                            </div>
                         </div>
 
-                        {/* Size Filter */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleSection('size')}
-                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide">Size</h3>
-                                <svg 
-                                    className={`w-4 h-4 text-gray-400 transition-transform ${expandedSections.size ? 'rotate-180' : ''}`}
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            {expandedSections.size && (
-                                <div className="px-6 pb-4">
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {sizes.map(size => (
-                                            <label key={size} className="flex items-center justify-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    value={size}
-                                                    checked={selectedSizes.includes(size)}
-                                                    onChange={() => toggleSize(size)}
-                                                    className="sr-only"
-                                                />
-                                                <div className={`w-12 h-12 flex items-center justify-center border-2 rounded transition-all ${
-                                                    selectedSizes.includes(size)
-                                                        ? 'border-red-500 bg-red-500 text-white'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                }`}>
-                                                    <span className="text-sm font-medium">{size}</span>
-                                                </div>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
 
-                        {/* Price Filter */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleSection('price')}
-                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide">Price</h3>
-                                <svg 
-                                    className={`w-4 h-4 text-gray-400 transition-transform ${expandedSections.price ? 'rotate-180' : ''}`}
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            {expandedSections.price && (
-                                <div className="px-6 pb-4">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between text-sm text-gray-600">
-                                            <span>${priceRange[0]}</span>
-                                            <span>${priceRange[1]}</span>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="500"
-                                            value={priceRange[1]}
-                                            onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
 
-                        {/* Color Filter */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleSection('color')}
-                                className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide">Color</h3>
-                                <svg 
-                                    className={`w-4 h-4 text-gray-400 transition-transform ${expandedSections.color ? 'rotate-180' : ''}`}
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            {expandedSections.color && (
-                                <div className="px-6 pb-4">
-                                    <div className="grid grid-cols-4 gap-3">
-                                        {colors.map(color => (
-                                            <label key={color.value} className="flex items-center justify-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    value={color.value}
-                                                    checked={selectedColors.includes(color.value)}
-                                                    onChange={() => toggleColor(color.value)}
-                                                    className="sr-only"
-                                                />
-                                                <div className={`w-10 h-10 rounded-full border-2 transition-all ${
-                                                    selectedColors.includes(color.value)
-                                                        ? 'border-red-500 ring-2 ring-red-500 ring-offset-2'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                }`}
-                                                style={{ backgroundColor: color.value }}
-                                                title={color.name}
-                                                />
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
                     </div>
                 </div>
 
@@ -330,19 +151,9 @@ const AllProducts = () => {
                             <div className="mb-8 p-4 bg-white border border-gray-200 rounded-lg">
                                 <div className="flex flex-wrap gap-2 items-center">
                                     <span className="text-sm font-medium text-gray-600">Active Filters:</span>
-                                    {selectedCategory !== 'all' && (
-                                        <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                                            {selectedCategory}
-                                        </span>
-                                    )}
-                                    {selectedSizes.map(size => (
-                                        <span key={size} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                                            {size}
-                                        </span>
-                                    ))}
-                                    {selectedColors.map(color => (
-                                        <span key={color} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                                            {colors.find(c => c.value === color)?.name}
+                                    {selectedCategories.map(category => (
+                                        <span key={category} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                                            {category}
                                         </span>
                                     ))}
                                     <button
@@ -422,86 +233,15 @@ const AllProducts = () => {
                                     {categories.map(category => (
                                         <label key={category} className="flex items-center gap-3 cursor-pointer">
                                             <input
-                                                type="radio"
-                                                name="mobile-category"
+                                                type="checkbox"
                                                 value={category}
-                                                checked={selectedCategory === category}
-                                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                                checked={selectedCategories.includes(category)}
+                                                onChange={() => toggleCategory(category)}
                                                 className="w-4 h-4 border-2 border-gray-300 text-red-500 focus:ring-red-500"
                                             />
                                             <span className="text-sm text-gray-700 capitalize">
-                                                {category === 'all' ? 'All Categories' : category}
+                                                {category}
                                             </span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Size */}
-                            <div>
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide mb-4">Size</h3>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {sizes.map(size => (
-                                        <label key={size} className="flex items-center justify-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                value={size}
-                                                checked={selectedSizes.includes(size)}
-                                                onChange={() => toggleSize(size)}
-                                                className="sr-only"
-                                            />
-                                            <div className={`w-12 h-12 flex items-center justify-center border-2 rounded transition-all ${
-                                                selectedSizes.includes(size)
-                                                    ? 'border-red-500 bg-red-500 text-white'
-                                                    : 'border-gray-300 hover:border-gray-400'
-                                            }`}>
-                                                <span className="text-sm font-medium">{size}</span>
-                                            </div>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Price */}
-                            <div>
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide mb-4">Price</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between text-sm text-gray-600">
-                                        <span>${priceRange[0]}</span>
-                                        <span>${priceRange[1]}</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="500"
-                                        value={priceRange[1]}
-                                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Color */}
-                            <div>
-                                <h3 className="text-sm font-bold text-black uppercase tracking-wide mb-4">Color</h3>
-                                <div className="grid grid-cols-4 gap-3">
-                                    {colors.map(color => (
-                                        <label key={color.value} className="flex items-center justify-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                value={color.value}
-                                                checked={selectedColors.includes(color.value)}
-                                                onChange={() => toggleColor(color.value)}
-                                                className="sr-only"
-                                            />
-                                            <div className={`w-10 h-10 rounded-full border-2 transition-all ${
-                                                selectedColors.includes(color.value)
-                                                    ? 'border-red-500 ring-2 ring-red-500 ring-offset-2'
-                                                    : 'border-gray-300 hover:border-gray-400'
-                                            }`}
-                                            style={{ backgroundColor: color.value }}
-                                            title={color.name}
-                                            />
                                         </label>
                                     ))}
                                 </div>

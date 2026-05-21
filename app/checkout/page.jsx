@@ -12,7 +12,7 @@ import OrderSummary from "@/components/OrderSummary";
 
 const Checkout = () => {
   const {
-    user, 
+    user,
     products,
     currency,
     router,

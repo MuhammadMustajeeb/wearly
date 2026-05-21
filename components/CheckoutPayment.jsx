@@ -12,30 +12,36 @@ const CheckoutPayment = ({ paymentMethod, setPaymentMethod, onPlaceOrder, loadin
             <div className="flex items-center gap-4">
               <input
                 type="radio"
-                checked
-                readOnly
+                name="shippingMethod"
+                value="karachi"
+                checked={paymentMethod === "karachi"}
+                onChange={() => setPaymentMethod("karachi")}
                 className="w-4 h-4 border-2 border-gray-300 text-black focus:ring-black"
               />
               <div>
-                <p className="text-sm font-bold text-black">Standard Delivery + COD</p>
-                <p className="text-xs text-gray-600">5-7 business days</p>
+                <p className="text-sm font-bold text-black">Standard Delivery — Karachi</p>
+                <p className="text-xs text-gray-600">3-5 business days</p>
               </div>
             </div>
-            <span className="text-sm font-bold text-black">$50</span>
+            <span className="text-sm font-bold text-black">Rs. 150</span>
           </label>
 
           <label className="flex justify-between items-center border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-black transition-colors duration-300">
             <div className="flex items-center gap-4">
               <input
                 type="radio"
+                name="shippingMethod"
+                value="outside"
+                checked={paymentMethod === "outside"}
+                onChange={() => setPaymentMethod("outside")}
                 className="w-4 h-4 border-2 border-gray-300 text-black focus:ring-black"
               />
               <div>
-                <p className="text-sm font-bold text-black">Free Delivery | Online Payment</p>
+                <p className="text-sm font-bold text-black">Standard Delivery — Outside Karachi</p>
                 <p className="text-xs text-gray-600">5-7 business days</p>
               </div>
             </div>
-            <span className="text-sm font-bold text-black">FREE</span>
+            <span className="text-sm font-bold text-black">Rs. 200</span>
           </label>
         </div>
       </div>
@@ -51,7 +57,7 @@ const CheckoutPayment = ({ paymentMethod, setPaymentMethod, onPlaceOrder, loadin
             <p className="text-sm font-bold text-black">Cash on Delivery (COD)</p>
           </div>
           <p className="text-xs text-gray-600">
-            Cash handling charges $50 applies on all COD orders. Pay when you receive your order.
+            Pay when you receive your order. No additional charges.
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ import CartItemsDrawer from "./CartItemsDrawer";
 import { useRouter } from "next/navigation";
 
 const CartDrawer = () => {
-  const { cartItems, isCartOpen, setIsCartOpen, getCartAmount } = useAppContext();
+  const { cartItems, isCartOpen, setIsCartOpen, getCartAmount, currency } = useAppContext();
   const router = useRouter();
 
   // Disable background scroll when drawer open
@@ -81,7 +81,7 @@ const CartDrawer = () => {
               {/* Subtotal */}
               <div className="flex justify-between items-center mb-6">
                 <span className="text-lg font-bold text-black uppercase tracking-wide">Subtotal</span>
-                <span className="text-2xl font-black text-black">${getCartAmount()}</span>
+                <span className="text-2xl font-black text-black">{currency}{getCartAmount()}</span>
               </div>
 
               {/* Tax Note */}

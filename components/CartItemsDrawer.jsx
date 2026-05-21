@@ -20,6 +20,7 @@ const CartItemsDrawer = () => {
 
         if (!product || qty <= 0) return null;
 
+        const { currency } = useAppContext();
         const itemPrice = getAdjustedPrice(product, size, color);
         const totalPrice = itemPrice * qty;
 
@@ -96,10 +97,10 @@ const CartItemsDrawer = () => {
                 {/* Item Total Price */}
                 <div className="text-right">
                   <p className="text-sm text-gray-600 line-through">
-                    ${product.price * qty}
+                    {currency}{product.price * qty}
                   </p>
                   <p className="text-lg font-bold text-black">
-                    ${totalPrice}
+                    {currency}{totalPrice}
                   </p>
                 </div>
               </div>

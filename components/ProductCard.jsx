@@ -29,8 +29,10 @@ const ProductCard = ({ product, showAddToCart = true }) => {
     // Add to cart
     addToCart(product._id, selectedSize, hasColors ? selectedColor : null, hasColors);
 
-    // Open cart panel
-    setIsCartOpen(true);
+    // Open cart panel with a small delay to ensure cart is updated first
+    setTimeout(() => {
+      setIsCartOpen(true);
+    }, 100);
   };
 
   return (

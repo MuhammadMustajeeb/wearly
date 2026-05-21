@@ -113,7 +113,7 @@ const CheckoutAddress = ({ selectedAddress, setSelectedAddress }) => {
           />
         </div>
 
-        {/* City and Postal Code */}
+        {/* City and State/Province */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="city" className="text-sm font-bold text-black uppercase tracking-wide">
@@ -130,18 +130,35 @@ const CheckoutAddress = ({ selectedAddress, setSelectedAddress }) => {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="postalCode" className="text-sm font-bold text-black uppercase tracking-wide">
-              Postal Code
+            <label htmlFor="state" className="text-sm font-bold text-black uppercase tracking-wide">
+              State / Province
             </label>
             <input
-              id="postalCode"
+              id="state"
               type="text"
-              placeholder="Enter postal code"
-              value={address.pincode}
-              onChange={(e) => setAddress(prev => ({ ...prev, pincode: e.target.value }))}
+              placeholder="Enter your state or province"
+              value={address.state}
+              onChange={(e) => setAddress(prev => ({ ...prev, state: e.target.value }))}
+              required
               className="w-full px-4 py-3 bg-transparent border-b-2 border-gray-300 focus:border-black outline-none transition-colors duration-300 placeholder-gray-400"
             />
           </div>
+        </div>
+
+        {/* Postal Code */}
+        <div className="space-y-2">
+          <label htmlFor="postalCode" className="text-sm font-bold text-black uppercase tracking-wide">
+            Postal Code
+          </label>
+          <input
+            id="postalCode"
+            type="text"
+            placeholder="Enter postal code"
+            value={address.pincode}
+            onChange={(e) => setAddress(prev => ({ ...prev, pincode: e.target.value }))}
+            required
+            className="w-full px-4 py-3 bg-transparent border-b-2 border-gray-300 focus:border-black outline-none transition-colors duration-300 placeholder-gray-400"
+          />
         </div>
 
         {/* Phone Field */}

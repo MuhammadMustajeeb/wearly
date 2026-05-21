@@ -14,6 +14,7 @@ const Navbar = () => {
 
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAccountDropdown, setIsAccountDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,11 +26,20 @@ const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
-    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isAccountDropdown && !event.target.closest('.account-dropdown')) {
+        setIsAccountDropdown(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isAccountDropdown]);
 
   // Search functionality
   useEffect(() => {
@@ -128,7 +138,7 @@ const Navbar = () => {
                 onClick={() => setIsCartOpen(true)}
                 className={`relative p-2 rounded-full transition-colors duration-300 ${
                   isScrolled 
-                    ? "hover:bg-black/10 text-black" 
+                    ? "hover:bg-white/10 text-white" 
                     : "hover:bg-black/10 text-black"
                 }`}
               >
@@ -145,22 +155,73 @@ const Navbar = () => {
               {/* USER ICON */}
               <div className="relative">
                 {user ? (
-                  <div className="p-1">
-                    <UserButton 
-                      appearance={{
-                        elements: {
-                          avatarBox: "w-8 h-8",
-                        }
-                      }}
-                    />
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsAccountDropdown(!isAccountDropdown)}
+                      className={`p-2 rounded-full transition-colors duration-300 ${
+                        isScrolled 
+                          ? "hover:bg-white/10 text-white" 
+                          : "hover:bg-black/10 text-black"
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </button>
+                    
+                    {/* Custom Dropdown Menu */}
+                    {isAccountDropdown && (
+                      <div className="account-dropdown absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              router.push('/my-orders');
+                              setIsAccountDropdown(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                          >
+                            My Orders
+                          </button>
+                          {isSeller && (
+                            <button
+                              onClick={() => {
+                                router.push('/seller');
+                                setIsAccountDropdown(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                            >
+                              Seller
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              router.push('/account');
+                              setIsAccountDropdown(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                          >
+                            Manage Account
+                          </button>
+                          <button
+                            onClick={() => {
+                              signOut();
+                              setIsAccountDropdown(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors text-red-600"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <button
                     onClick={openSignIn}
                     className={`p-2 rounded-full transition-colors duration-300 ${
                       isScrolled 
-                        ? "hover:bg-black/10 text-black" 
-                        : "hover:bg-black/10 text-black"
+                        ? "hover:bg-white/10 text-white" 
+                        : "hover:bg-white/10 text-white"
                     }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +269,7 @@ const Navbar = () => {
                 onClick={() => setIsCartOpen(true)}
                 className={`relative p-2 rounded-full transition-colors duration-300 ${
                   isScrolled 
-                    ? "hover:bg-black/10 text-black" 
+                    ? "hover:bg-white/10 text-white" 
                     : "hover:bg-black/10 text-black"
                 }`}
               >

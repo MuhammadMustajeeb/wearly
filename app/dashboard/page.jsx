@@ -25,8 +25,8 @@ export default async function DashboardPage() {
       <h1 className="text-2xl font-semibold mb-6">Flexters Dashboard</h1>
 
       <div className="grid grid-cols-4 gap-6">
-        <MetricCard title="Today Sales" value={`₨ ${stats.todaySales}`} />
-        <MetricCard title="Profit" value={`₨ ${stats.todayProfit}`} />
+        <MetricCard title="Today Sales" value={`Rs. ${stats.todaySales}`} />
+        <MetricCard title="Profit" value={`Rs. ${stats.todayProfit}`} />
         <MetricCard title="Conversion" value={`${stats.conversionRate}%`} />
         <MetricCard title="Top Product" value={stats.topProduct} />
       </div>

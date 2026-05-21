@@ -7,12 +7,11 @@ import { useAppContext } from "@/context/AppContext";
 const OrderSummary = ({
   cartItems,
   products,
-  currency,
   subtotal,
   shippingFee,
   totalAmount,
 }) => {
-  const { getAdjustedPrice } = useAppContext();
+  const { getAdjustedPrice, currency } = useAppContext();
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -62,10 +61,10 @@ const OrderSummary = ({
               {/* Price */}
               <div className="text-right">
                 <p className="text-sm text-gray-500 line-through">
-                  ${product.price * qty}
+                  {currency}{product.price * qty}
                 </p>
                 <p className="text-lg font-bold text-black">
-                  ${totalPrice}
+                  {currency}{totalPrice}
                 </p>
               </div>
             </div>
@@ -78,13 +77,13 @@ const OrderSummary = ({
         {/* Subtotal */}
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium text-gray-600">Subtotal</span>
-          <span className="text-sm font-bold text-black">${subtotal}</span>
+          <span className="text-sm font-bold text-black">Rs. {subtotal}</span>
         </div>
 
         {/* Shipping */}
         <div className="flex justify-between items-center">
           <span className="text-sm font-medium text-gray-600">Shipping</span>
-          <span className="text-sm font-bold text-black">${shippingFee}</span>
+          <span className="text-sm font-bold text-black">Rs. {shippingFee}</span>
         </div>
 
         {/* Divider */}
@@ -93,7 +92,7 @@ const OrderSummary = ({
         {/* Total */}
         <div className="flex justify-between items-center">
           <span className="text-lg font-bold text-black uppercase tracking-wide">Total</span>
-          <span className="text-2xl font-black text-black">${totalAmount}</span>
+          <span className="text-2xl font-black text-black">Rs. {totalAmount}</span>
         </div>
 
         {/* Tax Note */}

@@ -322,61 +322,7 @@ const Home = () => {
 
                   {/* Product Card */}
 
-                  <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-
-                    {/* Product Image */}
-
-                    <div className="relative h-80 overflow-hidden">
-
-                      <Image
-
-                        src={product.image[0]}
-
-                        alt={product.name}
-
-                        fill
-
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-
-                      />
-
-                      
-
-                      {/* Quick Add Button */}
-
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-
-                        <button className="bg-white text-black px-6 py-3 text-sm font-bold tracking-widest uppercase hover:bg-red-500 hover:text-white transition-all duration-300">
-
-                          Quick Add
-
-                        </button>
-
-                      </div>
-
-                    </div>
-
-                    
-
-                    {/* Product Info */}
-
-                    <div className="p-6">
-
-                      <h3 className="text-lg font-bold text-black mb-2 group-hover:text-red-500 transition-colors duration-300">
-
-                        {product.name}
-
-                      </h3>
-
-                      <p className="text-2xl font-black text-black">
-
-                        ${product.price}
-
-                      </p>
-
-                    </div>
-
-                  </div>
+                  <ProductCard product={product} showAddToCart={true} />
 
                 </div>
 
@@ -679,87 +625,55 @@ const Home = () => {
               {/* Scrollable Reviews */}
 
               <div className="overflow-x-auto scrollbar-hide">
-
                 <div className="flex space-x-6 pb-4">
 
                   {[
 
                     {
-
                       rating: 5,
-
-                      review: "Absolutely love the quality! The fabric is premium and the fit is perfect. Best purchase I've made this year.",
-
-                      name: "Sarah Johnson",
-
-                      city: "New York"
-
+                      review: "Assalam O Alaikum shirt receive hogyi \neverything is beautiful ❤️ Jazakallah khair",
+                      name: "Customer 1",
+                      city: ""
                     },
 
                     {
-
                       rating: 5,
-
-                      review: "Fast shipping and amazing customer service. The tees exceeded my expectations. Will definitely order again!",
-
-                      name: "Mike Chen",
-
-                      city: "Los Angeles"
-
+                      review: "Order receive hogya tha \nQuality is amazing 🤍!!!",
+                      name: "Customer 2",
+                      city: ""
                     },
 
                     {
-
-                      rating: 4,
-
-                      review: "Great designs and comfortable material. Slightly smaller than expected but still happy with the purchase.",
-
-                      name: "Emma Williams",
-
-                      city: "London"
-
-                    },
-
-                    {
-
                       rating: 5,
-
-                      review: "The limited edition drop was worth every penny! So many compliments whenever I wear it.",
-
-                      name: "Alex Rivera",
-
-                      city: "Miami"
-
+                      review: "Assalamoalaikum Order received hogya \nmashallah boht acha he Rate 10/10",
+                      name: "Customer 3",
+                      city: ""
                     },
 
                     {
-
                       rating: 5,
-
-                      review: "Finally found a brand that gets it right. Perfect balance of style and comfort.",
-
-                      name: "David Kim",
-
-                      city: "Toronto"
-
+                      review: "Walaikumsalam sir, Bht acha product hai 🤍🤍 \nQuality vvip Comfortable, \nAur apki services to overall excellent 🔥✨",
+                      name: "Customer 4",
+                      city: ""
                     },
 
                     {
+                      rating: 5,
+                      review: "Bhottt achii thiii the material was very good 👋 \nThe colour was exact same as I imagined \nWill be ordering againnn 🤍",
+                      name: "Customer 5",
+                      city: ""
+                    },
 
-                      rating: 4,
-
-                      review: "Love the minimalist approach. Clean designs that actually look good in person.",
-
-                      name: "Lisa Thompson",
-
-                      city: "Sydney"
-
+                    {
+                      rating: 5,
+                      review: "It is soo good ❤️ The quality, printing, \nEverything is soo good and nice 🔥 \nI like it soo muchh 🫶",
+                      name: "Customer 6",
+                      city: ""
                     }
 
                   ].map((review, index) => (
 
                     <div
-
                       key={index}
 
                       className="flex-shrink-0 w-80 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6"
@@ -835,7 +749,6 @@ const Home = () => {
                   ))}
 
                 </div>
-
               </div>
 
             </div>
