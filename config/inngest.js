@@ -14,87 +14,98 @@ export const inngest = new Inngest({
 // Inngest function to save user data to a database 
 
 export const syncUserCreation = inngest.createFunction(
-    {
-        id: 'sync-user-from-clerk'
-    },
-    {
-        event: 'clerk/user.created'
-    },
-    async ({ event}) => {
-        const { id, first_name, last_name, email_addresses,image_url } = event.data;
-        const userData = {
-            _id: id,
-            email: email_addresses[0].email_address,
-            name: first_name + " " + last_name,
-            imageUrl: image_url
-        }
-        await connectDB();
-        await User.create(userData);
-    }
-)
+  {
+    id: "sync-user-from-clerk",
+    triggers: [{ event: "clerk/user.created" }],
+  },
+  async ({ event }) => {
+    const { id, first_name, last_name, email_addresses, image_url } =
+      event.data;
+
+    const userData = {
+      _id: id,
+      email: email_addresses[0].email_address,
+      name: first_name + " " + last_name,
+      imageUrl: image_url,
+    };
+
+    await connectDB();
+    await User.create(userData);
+  }
+);
 
 // Inngest function to update user data in the database
 export const syncUserUpdation = inngest.createFunction(
-    {
-        id: 'update-user-from-clerk'
-    },
-    { event: 'clerk/user.updated' },
-    async ({event}) => {
-        const { id, first_name, last_name, email_addresses,image_url } = event.data;
-        const userData = {
-            _id: id,
-            email: email_addresses[0].email_address,
-            name: first_name + " " + last_name,
-            imageUrl: image_url
-        }
-        await connectDB();
-        await User.findByIdAndUpdate(id, userData);
-    }
-)
+  {
+    id: "update-user-from-clerk",
+    triggers: [{ event: "clerk/user.updated" }],
+  },
+  async ({ event }) => {
+    const { id, first_name, last_name, email_addresses, image_url } =
+      event.data;
+
+    const userData = {
+      _id: id,
+      email: email_addresses[0].email_address,
+      name: first_name + " " + last_name,
+      imageUrl: image_url,
+    };
+
+    await connectDB();
+    await User.findByIdAndUpdate(id, userData);
+  }
+);
 
 // Inngest function to delete user data from the database
 export const syncUserDeletion = inngest.createFunction(
-    {
-        id: 'delete-user-with-clerk'
-    },
-    { event: 'clerk/user.deleted' },
-    async ({event}) => {
-        const { id } = event.data;
-        await connectDB();
-        await User.findByIdAndDelete(id);
-    }    
-)   
+  {
+    id: "delete-user-with-clerk",
+    triggers: [{ event: "clerk/user.deleted" }],
+  },
+  async ({ event }) => {
+    const { id } = event.data;
+
+    await connectDB();
+    await User.findByIdAndDelete(id);
+  }
+);  
 
 // Inngest function to create user's order in database
 export const createUserOrder = inngest.createFunction(
-    {
-        id: 'create-user-order'
+  {
+    id: "create-user-order",
+    triggers: [{ event: "order/created" }],
+    batchEvents: {
+      maxSize: 5,
+      timeout: "5s",
     },
-    { event: 'order/created', batchEvents: { maxSize: 5, timeout: "5s" } },// suppose receive more than 25 orders within 5sec, so batching will started and all the 25 orders will be processed in a batch 
+  },
 
-    async ({ events }) => {
-        console.log("Incoming order events:", JSON.stringify(events, null, 2));
-        const orders = events.map((event) => {
-            return {
-                userId: event.data.userId,
-                items: event.data.items,
-                amount: event.data.amount,
-                address: event.data.address,
-                date: event.data.date,
-                paymentMethod: event.data.paymentMethod || "COD", // or pass from frontend
+  async ({ events }) => {
+    console.log("Incoming order events:", JSON.stringify(events, null, 2));
+
+    const orders = events.map((event) => {
+      return {
+        userId: event.data.userId,
+        items: event.data.items,
+        amount: event.data.amount,
+        address: event.data.address,
+        date: event.data.date,
+        paymentMethod: event.data.paymentMethod || "COD",
         paymentStatus: event.data.paymentStatus || "pending",
         orderStatus: event.data.orderStatus || "placed",
-            }
-        })
+      };
+    });
 
-        console.log("🛠️ Order schema paths:", Object.keys(Order.schema.paths));
+    console.log("🛠️ Order schema paths:", Object.keys(Order.schema.paths));
 
+    await connectDB();
 
-        // connect to db
-        await connectDB();
-        // get order model
-        await Order.insertMany(orders); //order array
+    await Order.insertMany(orders);
 
-        return { success: true, processed: orders.length}; // return how many orders processed
-    }
-)
+    return {
+      success: true,
+      processed: orders.length,
+    };
+  }
+);
