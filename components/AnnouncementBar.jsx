@@ -31,7 +31,7 @@ const AnnouncementBar = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-red-600 text-white text-sm py-2 relative overflow-hidden z-50">
+    <div className="bg-red-600 text-white text-sm py-2 relative overflow-hidden">
       {/* Scrolling text container */}
       <div className="relative h-full flex items-center">
         <div 
@@ -52,8 +52,11 @@ const AnnouncementBar = () => {
 
       {/* Close button */}
       <button
-        onClick={() => setIsVisible(false)}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-1 transition-colors duration-200 z-10"
+        onClick={() => {
+          console.log('Close button clicked');
+          setIsVisible(false);
+        }}
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 rounded-full p-1 transition-colors duration-200"
         aria-label="Close announcement"
       >
         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

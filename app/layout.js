@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 import Script from "next/script"; // ✅ ADD THIS
 import MaintenanceBanner from "@/components/MaintenanceBanner";
 import CartDrawer from "@/components/CartDrawer";
-import AnnouncementBar from "@/components/AnnouncementBar";
 
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800", "900"] });
@@ -63,9 +62,8 @@ export default function RootLayout({ children }) {
           <Toaster />
           <AppContextProvider>
             {/* <MaintenanceBanner /> */}
-            <AnnouncementBar />
             <Header className="fixed top-0 left-0 w-full z-50 bg-transparent"/>
-            <main className="relative z-0 min-h-screen flex flex-col pt-16">{children} 
+            <main className="relative z-0 min-h-screen flex flex-col pt-20">{children} 
               {/* <Footer /> */}
             </main>
             <CartDrawer />
